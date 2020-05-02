@@ -9,41 +9,61 @@ array set positionNew {
     posy 0
 }
 
-set rumbo 45
+set heading 5
 
-canvas .can
+wm geometry . 800x800
+canvas .window -width 800 -height 800
+pack .window
 
 #dibujado
 
 #set a [getRadians 270]
 #puts $a
 
+puts [winfo height .]
+
 av 100
-av 200
+gd 90
+av 100
+gd 90
+av 100
+gd 90
+av 90
 
 #.can create line 0 0 100 100
 
-pack .can
+
 
 #procedimientos generales
-proc getRadians { grads } {
-    return [expr 6.2831853*$grads/360]
+proc getRadians { degrees } {
+    return [expr 6.2831853*$degrees/360]
 }
 
+proc redraw {} {
+    ::.window create line [expr $::position(posx)+400] [expr $::position(posy)+400] [expr $::positionNew(posx)+400] [expr $::positionNew(posy)+400] 
+    set ::position(posx) $::positionNew(posx)
+    set ::position(posy) $::positionNew(posy)
+}
 
 #procedimientos movimiento
-proc av {puntos} {
-    set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::rumbo]) * $puntos ]
-    set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::rumbo] )* $puntos ]
-    
-    puts "$::positionNew(posx) $::positionNew(posy)"
-    
-    
+proc av {dots} {
+    set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
+    set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
    
-    ::.can create line $::position(posx) $::position(posy) $::positionNew(posx) $::positionNew(posy) 
+    redraw
+    puts "$::positionNew(posx) $::positionNew(posy)"
 }
 
+proc gd {degrees} {
+    set ::heading [expr $::heading+$degrees]
+    if { abs($::heading) > 360 } {
+	set ::heading ::heading%360
+    }
+}
 
+proc gi {degrees} {
+    set ::heading $::heading-$degrees
+}
 
 
 
