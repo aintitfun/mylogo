@@ -4,15 +4,19 @@ array set position {
     posx 0
     posy 0
 }
-array set position_new {
+array set positionNew {
     posx 0
     posy 0
 }
 
-set rumbo 180
+set rumbo 45
+
+canvas .can
 
 #dibujado
-canvas .can
+
+#set a [getRadians 270]
+#puts $a
 
 av 100
 av 200
@@ -21,11 +25,22 @@ av 200
 
 pack .can
 
+#procedimientos generales
+proc getRadians { grads } {
+    return [expr 6.2831853*$grads/360]
+}
+
+
 #procedimientos movimiento
 proc av {puntos} {
-    set ::position_new(posx) [expr  $::position(posx)+$puntos ]
-    set ::position_new(posy) [expr  $::position(posy)+$puntos ]
-    ::.can create line $::position(posx) $::position(posy) $::position_new(posx) $::position_new(posy) 
+    set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::rumbo]) * $puntos ]
+    set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::rumbo] )* $puntos ]
+    
+    puts "$::positionNew(posx) $::positionNew(posy)"
+    
+    
+   
+    ::.can create line $::position(posx) $::position(posy) $::positionNew(posx) $::positionNew(posy) 
 }
 
 
