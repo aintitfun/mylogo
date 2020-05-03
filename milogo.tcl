@@ -21,6 +21,7 @@ pack .window
 pack [entry .commandsEntry -textvar commandsVar -width 50]
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
+	ParseCommand
 	eval  $commandsVar
 	set commandsVar "" 
     }
@@ -29,8 +30,8 @@ bind .commandsEntry <Key> {
 #testing code to draw
 #repite 18 {
 #repite 36 {
-#av 10
-#gd 10
+#;av 100
+#;gd 100
 #}
 #gd 20}
 
@@ -45,6 +46,19 @@ proc redraw {} {
     ::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
+}
+
+proc ParseCommand {} {
+    # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
+    set ::commandsVar [string map {\[ \{} $::commandsVar]
+    set ::commandsVar [string map {\] \}} $::commandsVar]
+    # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
+    set ::commandsVar [string map {av ;av} $::commandsVar]
+    set ::commandsVar [string map {gd ;gd} $::commandsVar]
+    set ::commandsVar [string map {gi ;gi} $::commandsVar]
+    set ::commandsVar [string map {repeat ;repeat} $::commandsVar]
+    # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
+    #...
 }
 
 #procedimientos movimiento
