@@ -18,12 +18,12 @@ canvas .window -width $WIDTH -height $WIDTH
 pack .window
 
 #testing code to draw
-
+repite 18 {
 repite 36 {
 av 10
 gd 10
 }
-
+gd 20}
 
 
 
@@ -42,32 +42,33 @@ proc redraw {} {
 proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
-     redraw
+    redraw
     #puts "$::positionNew(posx) $::positionNew(posy)"
 }
 
 proc gd {degrees} {
     set ::heading [expr $::heading+$degrees]
-    NormalizeHeading $degrees
+    NormalizeHeading $::heading
 }
 
 proc gi {degrees} {
     set ::heading [expr $::heading-$degrees]
-    NormalizeHeading $degrees
+    NormalizeHeading $::heading
 }
 
 proc NormalizeHeading {degrees} {
     if { abs($::heading) > 360 } {
-	set ::heading ::heading%360
+	puts $::heading
+	set ::heading [expr $::heading%360]
     }
     if {$::heading<0} {
-      set ::heading ::heading+360;
+      set ::heading [expr $::heading+360]
     }
 
 }
 
 proc repite { cont commands} {
-    for {set i 0} {$i<$cont} {incr 1} {
+    for {set i 0} {$i<$cont} {incr i} {
 	eval $commands
     }
 
