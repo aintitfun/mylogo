@@ -1,5 +1,4 @@
 #variables 
-
 array set position {
     posx 0
     posy 0
@@ -8,22 +7,32 @@ array set positionNew {
     posx 0
     posy 0
 }
-
 set heading 45
 set WIDTH 400
-set HALFWIDTH 200
+set HEIGHT [expr $WIDTH+100]
+set HALFWIDTH [expr $WIDTH/2]
 
-wm geometry . "$WIDTH\x$WIDTH"
+#ventana y canvas
+wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
 pack .window
 
-#testing code to draw
-repite 18 {
-repite 36 {
-av 10
-gd 10
+#entrada de comandos
+pack [entry .commandsEntry -textvar commandsVar -width 50]
+bind .commandsEntry <Key> {
+    if {"%K" in {Enter Return}} {
+	eval  $commandsVar
+	set commandsVar "" 
+    }
 }
-gd 20}
+
+#testing code to draw
+#repite 18 {
+#repite 36 {
+#av 10
+#gd 10
+#}
+#gd 20}
 
 
 
@@ -58,20 +67,17 @@ proc gi {degrees} {
 
 proc NormalizeHeading {degrees} {
     if { abs($::heading) > 360 } {
-	puts $::heading
 	set ::heading [expr $::heading%360]
     }
     if {$::heading<0} {
       set ::heading [expr $::heading+360]
     }
-
 }
 
 proc repite { cont commands} {
     for {set i 0} {$i<$cont} {incr i} {
 	eval $commands
     }
-
 }
 
 
