@@ -9,28 +9,21 @@ array set positionNew {
     posy 0
 }
 
-set heading 5
+set heading 45
+set WIDTH 400
+set HALFWIDTH 200
 
-wm geometry . 800x800
-canvas .window -width 800 -height 800
+wm geometry . "$WIDTH\x$WIDTH"
+canvas .window -width $WIDTH -height $WIDTH
 pack .window
 
-#dibujado
+#testing code to draw
 
-#set a [getRadians 270]
-#puts $a
+repite 36 {
+av 10
+gd 10
+}
 
-puts [winfo height .]
-
-av 100
-gd 90
-av 100
-gd 90
-av 100
-gd 90
-av 90
-
-#.can create line 0 0 100 100
 
 
 
@@ -40,7 +33,7 @@ proc getRadians { degrees } {
 }
 
 proc redraw {} {
-    ::.window create line [expr $::position(posx)+400] [expr $::position(posy)+400] [expr $::positionNew(posx)+400] [expr $::positionNew(posy)+400] 
+    ::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
 }
@@ -49,22 +42,35 @@ proc redraw {} {
 proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
-   
-    redraw
-    puts "$::positionNew(posx) $::positionNew(posy)"
+     redraw
+    #puts "$::positionNew(posx) $::positionNew(posy)"
 }
 
 proc gd {degrees} {
     set ::heading [expr $::heading+$degrees]
-    if { abs($::heading) > 360 } {
-	set ::heading ::heading%360
-    }
+    NormalizeHeading $degrees
 }
 
 proc gi {degrees} {
-    set ::heading $::heading-$degrees
+    set ::heading [expr $::heading-$degrees]
+    NormalizeHeading $degrees
 }
 
+proc NormalizeHeading {degrees} {
+    if { abs($::heading) > 360 } {
+	set ::heading ::heading%360
+    }
+    if {$::heading<0} {
+      set ::heading ::heading+360;
+    }
 
+}
+
+proc repite { cont commands} {
+    for {set i 0} {$i<$cont} {incr 1} {
+	eval $commands
+    }
+
+}
 
 
