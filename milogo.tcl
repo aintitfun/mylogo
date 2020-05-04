@@ -11,6 +11,7 @@ set heading 45
 set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
+set isPenDown 1
 
 #ventana y canvas
 wm geometry . "$WIDTH\x$HEIGHT"
@@ -43,12 +44,17 @@ proc getRadians { degrees } {
 }
 
 proc redraw {} {
-    ::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
+    if { $::isPenDown eq 1} {
+	::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
+    }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
 }
 
 proc ParseCommand {} {
+    #quitamos las comillas dobles de los haz
+    set ::commandsVar [string map {\" \ } $::commandsVar]
+    set ::commandsVar [string map {\: \$ } $::commandsVar]
     # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
     set ::commandsVar [string map {\[ \{} $::commandsVar]
     set ::commandsVar [string map {\] \}} $::commandsVar]
@@ -94,4 +100,15 @@ proc repite { cont commands} {
     }
 }
 
+proc bl {} {
+    set ::isPenDown 1
+}
+
+proc sl {} {
+    set ::isPenDown 0
+}
+
+proc haz {variable value} {
+    eval "set $variable $value"
+}
 
