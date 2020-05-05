@@ -12,7 +12,7 @@ set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
-
+set variables {}
 #ventana y canvas
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
@@ -109,6 +109,6 @@ proc sl {} {
 }
 
 proc haz {variable value} {
-    eval "set $variable $value"
+    eval "set ::variables($variable) $value"
 }
 
