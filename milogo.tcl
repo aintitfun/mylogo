@@ -12,7 +12,8 @@ set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
-set variables {}
+global variables
+
 #ventana y canvas
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
@@ -54,7 +55,7 @@ proc redraw {} {
 proc ParseCommand {} {
     #quitamos las comillas dobles de los haz
     set ::commandsVar [string map {\" \ } $::commandsVar]
-    set ::commandsVar [string map {\: \$ } $::commandsVar]
+    set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
     # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
     set ::commandsVar [string map {\[ \{} $::commandsVar]
     set ::commandsVar [string map {\] \}} $::commandsVar]
