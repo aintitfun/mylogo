@@ -12,7 +12,7 @@ set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
-global variables
+global variablesArray
 
 #ventana y canvas
 wm geometry . "$WIDTH\x$HEIGHT"
@@ -55,7 +55,8 @@ proc redraw {} {
 proc ParseCommand {} {
     #quitamos las comillas dobles de los haz
     set ::commandsVar [string map {\" \ } $::commandsVar]
-    set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
+    #set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
+    set ::commandsVar [regsub -all {:([a-z]*[0-9]*)} $::commandsVar {$::variablesArray(\1)} ]
     # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
     set ::commandsVar [string map {\[ \{} $::commandsVar]
     set ::commandsVar [string map {\] \}} $::commandsVar]
@@ -63,7 +64,8 @@ proc ParseCommand {} {
     set ::commandsVar [string map {av ;av} $::commandsVar]
     set ::commandsVar [string map {gd ;gd} $::commandsVar]
     set ::commandsVar [string map {gi ;gi} $::commandsVar]
-    set ::commandsVar [string map {repeat ;repeat} $::commandsVar]
+    set ::commandsVar [string map {repite ;repite} $::commandsVar]
+    set ::commandsVar [string map {haz ;haz} $::commandsVar]
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
 }
@@ -110,6 +112,6 @@ proc sl {} {
 }
 
 proc haz {variable value} {
-    eval "set ::variables($variable) $value"
+    eval "set ::variablesArray($variable) [expr $value]"
 }
 
