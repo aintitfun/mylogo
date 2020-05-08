@@ -9,7 +9,7 @@ array set positionNew {
     posy 0
 }
 
-set heading 45
+set heading 0
 set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
@@ -126,5 +126,8 @@ proc re {dots} {
 }
 
 proc bp {} {
+	set ::positionNew(posx) 0
+    	set ::positionNew(posy) 0
+	set ::heading 0
 	.window delete all
 }
