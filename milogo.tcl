@@ -3,16 +3,19 @@ array set position {
     posx 0
     posy 0
 }
+
 array set positionNew {
     posx 0
     posy 0
 }
+
 set heading 45
 set WIDTH 400
 set HEIGHT [expr $WIDTH+100]
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 global variablesArray
+global proceduresArray
 
 #ventana y canvas
 wm geometry . "$WIDTH\x$HEIGHT"
@@ -66,6 +69,7 @@ proc ParseCommand {} {
     set ::commandsVar [string map {gi ;gi} $::commandsVar]
     set ::commandsVar [string map {repite ;repite} $::commandsVar]
     set ::commandsVar [string map {haz ;haz} $::commandsVar]
+    set ::commandsVar [string map {bp ;bp} $::commandsVar]
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
 }
@@ -115,3 +119,12 @@ proc haz {variable value} {
     eval "set ::variablesArray($variable) [expr $value]"
 }
 
+proc re {dots} {
+     set ::positionNew(posx) [expr  $::position(posx)-cos([getRadians $::heading]) * $dots ]
+     set ::positionNew(posy) [expr  $::position(posy)-sin( [getRadians $::heading] )* $dots ]
+     redraw
+}
+
+proc bp {} {
+	.window delete all
+}
