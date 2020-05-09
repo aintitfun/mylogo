@@ -30,20 +30,15 @@ place .proceduresText -x [expr $WIDTH-200] -y 0
 #events
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
-	LoadProcedures
-	ParseCommand
-	eval  $commandsVar
+	
+	set mytext [.proceduresText get 1.0 end]
+	set tmp2 [FormatProcedures $mytext]
+	eval [FormatCommand $tmp2 ]
+	puts $tmp2
+	eval  [FormatCommand $commandsVar]
 	set commandsVar "" 
     }
 }
-
-#testing code to draw
-#repite 18 {
-#repite 36 {
-#;av 100
-#;gd 100
-#}
-#gd 20}
 
 
 
@@ -60,30 +55,35 @@ proc redraw {} {
     set ::position(posy) $::positionNew(posy)
 }
 
-proc ParseCommand {} {
+proc FormatCommand {command} {
     #quitamos las comillas dobles de los haz
-    set ::commandsVar [string map {\" \ } $::commandsVar]
+    set command [string map {\" \ } $command]
     #set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
-    set ::commandsVar [regsub -all {:([a-z]*[0-9]*)} $::commandsVar {$::variablesArray(\1)} ]
+    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::variablesArray(\1)} ]
     # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
-    set ::commandsVar [string map {\[ \{} $::commandsVar]
-    set ::commandsVar [string map {\] \}} $::commandsVar]
+    set command [string map {\[ \{} $command]
+    set command [string map {\] \}} $command]
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
-    set ::commandsVar [string map {av ;av} $::commandsVar]
-    set ::commandsVar [string map {gd ;gd} $::commandsVar]
-    set ::commandsVar [string map {gi ;gi} $::commandsVar]
-    set ::commandsVar [string map {repite ;repite} $::commandsVar]
-    set ::commandsVar [string map {haz ;haz} $::commandsVar]
-    set ::commandsVar [string map {bp ;bp} $::commandsVar]
+    set command [string map {av ;av} $command]
+    set command [string map {gd ;gd} $command]
+    set command [string map {gi ;gi} $command]
+    set command [string map {repite ;repite} $command]
+    set command [string map {haz ;haz} $command]
+    set command [string map {bp ;bp} $command]
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
+    return $command
 }
 
-proc ParseProcedures {} {
-	set procedures [invoke tcleval ".proceduresText get 1.0 end"]
-    	set procedures [string map {"para" "proc" } $::commandsVar]
-    	set procedures [string map {"end" "}" } $::commandsVar]
-    	set procedures [string map {"[ ]" "{} {" } $::commandsVar]
+proc FormatProcedures {myprocedures} {
+
+	
+	#if {$myprocedures -neq ""} {
+    		set myprocedures [string map {"para" "proc" } $myprocedures]
+	    	set myprocedures [string map {"end" \} } $myprocedures]
+    		set myprocedures [string map {\[\ \] \{\}\ \{} $myprocedures]
+	#}
+	return $myprocedures
 }
 
 #procedimientos movimiento
