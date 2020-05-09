@@ -10,22 +10,27 @@ array set positionNew {
 }
 
 set heading 0
-set WIDTH 400
-set HEIGHT [expr $WIDTH+100]
+set WIDTH 800
+set HEIGHT [expr $WIDTH]
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 global variablesArray
 global proceduresArray
 
-#ventana y canvas
+#widgets
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
-pack .window
+text .proceduresText -width 40 -height 45
+entry .commandsEntry -textvar commandsVar -width 100
+grid .window .commandsEntry .proceduresText
+place .window -x 0 -y 0
+place .commandsEntry -x 0 -y [expr $WIDTH-50]
+place .proceduresText -x [expr $WIDTH-200] -y 0
 
-#entrada de comandos
-pack [entry .commandsEntry -textvar commandsVar -width 50]
+#events
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
+	LoadProcedures
 	ParseCommand
 	eval  $commandsVar
 	set commandsVar "" 
@@ -72,6 +77,13 @@ proc ParseCommand {} {
     set ::commandsVar [string map {bp ;bp} $::commandsVar]
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
+}
+
+proc ParseProcedures {} {
+	set procedures [invoke tcleval ".proceduresText get 1.0 end"]
+    	set procedures [string map {"para" "proc" } $::commandsVar]
+    	set procedures [string map {"end" "}" } $::commandsVar]
+    	set procedures [string map {"[ ]" "{} {" } $::commandsVar]
 }
 
 #procedimientos movimiento
