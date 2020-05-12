@@ -11,7 +11,7 @@ array set positionNew {
 
 set heading 0
 set WIDTH 800
-set HEIGHT [expr $WIDTH]
+set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 global variablesArray
@@ -20,11 +20,11 @@ global proceduresArray
 #widgets
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
-text .proceduresText -width 40 -height 45
+text .proceduresText -width 40 -height 27
 entry .commandsEntry -textvar commandsVar -width 100
 grid .window .commandsEntry .proceduresText
 place .window -x 0 -y 0
-place .commandsEntry -x 0 -y [expr $WIDTH-50]
+place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 place .proceduresText -x [expr $WIDTH-200] -y 0
 
 #events
@@ -79,9 +79,10 @@ proc FormatProcedures {myprocedures} {
 
 	
 	#if {$myprocedures -neq ""} {
-    		set myprocedures [string map {"para" "proc" } $myprocedures]
-	    	set myprocedures [string map {"end" \} } $myprocedures]
-    		set myprocedures [string map {\[\ \] \{\}\ \{} $myprocedures]
+    		set myprocedures [regsub -all {para ([a-z]*[0-9]*)\n} $myprocedures  "proc \\1  \{\} \{ " ]
+    		#set myprocedures [string map {"para" "proc" } $myprocedures]
+	    	set myprocedures [string map {"fin" \} } $myprocedures]
+    		#set myprocedures [string map {\[\ \] \{\}\ \{} $myprocedures]
 	#}
 	return $myprocedures
 }
