@@ -33,7 +33,7 @@ bind .commandsEntry <Key> {
 	
 	set mytext [.proceduresText get 1.0 end]
 	set tmp2 [FormatProcedures $mytext]
-	eval [FormatCommand $tmp2 ]
+	eval $tmp2 
 	puts $tmp2
 	eval  [FormatCommand $commandsVar]
 	set commandsVar "" 
@@ -55,14 +55,7 @@ proc redraw {} {
     set ::position(posy) $::positionNew(posy)
 }
 
-proc FormatCommand {command} {
-    #quitamos las comillas dobles de los haz
-    set command [string map {\" \ } $command]
-    #set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
-    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::variablesArray(\1)} ]
-    # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
-    set command [string map {\[ \{} $command]
-    set command [string map {\] \}} $command]
+proc SetSemicolonsOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
     set command [string map {av ;av} $command]
     set command [string map {gd ;gd} $command]
@@ -75,15 +68,50 @@ proc FormatCommand {command} {
     return $command
 }
 
-proc FormatProcedures {myprocedures} {
+proc ChangeBrackets {command} {
+    # necesitamos cambiar los corchetes por llaves para que lo entienda tcl
+    set command [string map {\[ \{} $command]
+    set command [string map {\] \}} $command]   
+}
 
-	
-	#if {$myprocedures -neq ""} {
-    		set myprocedures [regsub -all {para ([a-z]*[0-9]*)\n} $myprocedures  "proc \\1  \{\} \{ " ]
-    		#set myprocedures [string map {"para" "proc" } $myprocedures]
-	    	set myprocedures [string map {"fin" \} } $myprocedures]
-    		#set myprocedures [string map {\[\ \] \{\}\ \{} $myprocedures]
-	#}
+proc FormatVariables {command} {
+    #quitamos las comillas dobles de los haz
+    set command [string map {\" \ } $command]
+    #set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
+    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::variablesArray(\1)} ]
+    return $command
+}
+
+proc FormatCommand {command} {
+    set command [SetSemicolonsOnEachCommand $command]
+    set command [ChangeBrackets $command]
+    set command [FormatVariables $command]
+    
+    return $command
+}
+
+proc FormatProcedures {myprocedures} {
+	set 1stline [string range $myprocedures 0 [string first \n $myprocedures] ]
+	set 1stline [string map {para proc} $1stline ]
+	set firstpointspos [string first ":" $1stline]
+    
+	set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"] 
+    
+    set 1stline [string map { "\n" "\} \{\n" } $1stline]
+    set tempa [string first "\{" $1stline ]
+    set tempb [expr {[string first \n $myprocedures]+2}]
+    if { $tempa == $tempb } {
+	set 1stline [ string map { "\} \{\n" " \{\} \{\n" } $1stline ]
+	}
+
+    set rest [string range $myprocedures [string first \n $myprocedures] [string length $myprocedures]]
+	set myprocedures "$1stline $rest"
+	set myprocedures [string map {"fin" \} } $myprocedures]
+    set myprocedures [string map { \: \$ } $myprocedures]
+    
+    set myprocedures [SetSemicolonsOnEachCommand $myprocedures]
+    set myprocedures [ChangeBrackets $myprocedures]
+    
 	return $myprocedures
 }
 
@@ -140,7 +168,7 @@ proc re {dots} {
 
 proc bp {} {
 	set ::positionNew(posx) 0
-    	set ::positionNew(posy) 0
+	    set ::positionNew(posy) 0
 	set ::heading 0
 	.window delete all
 }
