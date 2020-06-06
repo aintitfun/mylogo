@@ -27,18 +27,23 @@ place .window -x 0 -y 0
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 place .proceduresText -x [expr $WIDTH-200] -y 0
 
+
+
 #events
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
 	
 	set mytext [.proceduresText get 1.0 end]
-	set tmp2 [FormatProcedures $mytext]
-	eval $tmp2 
-	puts $tmp2
+	if { [string trim $mytext] != "" } {
+	    set tmp2 [FormatProcedures $mytext]
+	    eval $tmp2 
+	    puts $tmp2
+	}
 	eval  [FormatCommand $commandsVar]
 	set commandsVar "" 
     }
 }
+
 
 
 
@@ -55,14 +60,19 @@ proc redraw {} {
     set ::position(posy) $::positionNew(posy)
 }
 
-proc SetSemicolonsOnEachCommand {command} {
+#proc ReplaceRepeats {command} {
+    #set command [string map {repite \nav} $command]   
+    #set command [regsub -all {repite([0-9]*)} $command {for \{set i 0\}\{\$i<(\1)\}\{incr \$i\}\{"} ]
+#}
+
+proc SetSeparationOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
-    set command [string map {av ;av} $command]
-    set command [string map {gd ;gd} $command]
-    set command [string map {gi ;gi} $command]
-    set command [string map {repite ;repite} $command]
-    set command [string map {haz ;haz} $command]
-    set command [string map {bp ;bp} $command]
+    set command [string map {av \nav} $command]
+    set command [string map {gd \ngd} $command]
+    set command [string map {gi \ngi} $command]
+    set command [string map {repite \nrepite} $command]
+    set command [string map {haz \nhaz} $command]
+    set command [string map {bp \nbp} $command]
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
     return $command
@@ -83,9 +93,10 @@ proc FormatVariables {command} {
 }
 
 proc FormatCommand {command} {
-    set command [SetSemicolonsOnEachCommand $command]
+    set command [SetSeparationOnEachCommand $command]
     set command [ChangeBrackets $command]
     set command [FormatVariables $command]
+    #set command [ReplaceRepeats $command]
     
     return $command
 }
@@ -109,9 +120,9 @@ proc FormatProcedures {myprocedures} {
 	set myprocedures [string map {"fin" \} } $myprocedures]
     set myprocedures [string map { \: \$ } $myprocedures]
     
-    set myprocedures [SetSemicolonsOnEachCommand $myprocedures]
+    set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
-    
+    #set myprocedures [ReplaceRepeats $myprocedures]
 	return $myprocedures
 }
 
