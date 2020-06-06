@@ -87,8 +87,7 @@ proc ChangeBrackets {command} {
 proc FormatVariables {command} {
     #quitamos las comillas dobles de los haz
     set command [string map {\" \ } $command]
-    #set ::commandsVar [string map {\: \$\:\:variables\( } $::commandsVar]
-    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::variablesArray(\1)} ]
+    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::\1} ]
     return $command
 }
 
@@ -167,9 +166,12 @@ proc sl {} {
     set ::isPenDown 0
 }
 
+
 proc haz {variable value} {
-    eval "set ::variablesArray($variable) [expr $value]"
+    set command "global $variable;set ::$variable [expr $value]"
+    eval $command
 }
+
 
 proc re {dots} {
      set ::positionNew(posx) [expr  $::position(posx)-cos([getRadians $::heading]) * $dots ]
