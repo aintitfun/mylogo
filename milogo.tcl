@@ -104,21 +104,26 @@ proc FormatProcedures {myprocedures} {
     set 1stline [string range $myprocedures 0 [string first \n $myprocedures] ]
     set 1stline [string map {para proc} $1stline ]
     set firstpointspos [string first ":" $1stline]
-    set variables [ string range $1stline $firstpointspos+1  [ string length $1stline ]  ]
+    if {$firstpointspos > -1 } {
+        set variables [ string range $1stline $firstpointspos+1  [ string length $1stline ]  ]
+        
+        set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"] 
     
-    set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"] 
-    
-    set 1stline [string map { "\n" "\} \{\n" } $1stline]
+        set 1stline [string map { "\n" "\} \{\n" } $1stline]
+    } else {
+        set 1stline [string map { "\n" " \{\} \{\n" } $1stline]
+
+    }
     set tempa [string first "\{" $1stline ]
     set tempb [expr {[string first \n $myprocedures]+2}]
     if { $tempa == $tempb } {
-	set 1stline [ string map { "\} \{\n" " \{\} \{\n" } $1stline ]
+        set 1stline [ string map { "\} \{\n" " \{\} \{\n" } $1stline ]
 	}
 
     set rest [string range $myprocedures [string first \n $myprocedures] [string length $myprocedures]]
-    set myprocedures "$1stline ::$rest "
+    set myprocedures "$1stline $rest "
 	set myprocedures [string map {"fin" \} } $myprocedures]
-    set myprocedures [string map { \: \$:: } $myprocedures]
+    set myprocedures [string map { \: \$ } $myprocedures]
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
