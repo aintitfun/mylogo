@@ -60,10 +60,11 @@ proc redraw {} {
     set ::position(posy) $::positionNew(posy)
 }
 
-#proc ReplaceRepeats {command} {
+proc ReplaceRepeats {command} {
     #set command [string map {repite \nav} $command]   
     #set command [regsub -all {repite([0-9]*)} $command {for \{set i 0\}\{\$i<(\1)\}\{incr \$i\}\{"} ]
-#}
+    set command [regsub -all {repite ([^\s]+)} $command { for { set i 0 } { $i<\1 } {incr i } } ]
+}
 
 proc SetSeparationOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
@@ -107,7 +108,9 @@ proc FormatProcedures {myprocedures} {
     if {$firstpointspos > -1 } {
         set variables [ string range $1stline $firstpointspos+1  [ string length $1stline ]  ]
         
-        set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"] 
+        set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"]
+        #previous command removes the first ":" but we need to remove the rest if there are more variables
+        set 1stline [string map { ":" ""}  $1stline ]
     
         set 1stline [string map { "\n" "\} \{\n" } $1stline]
     } else {
@@ -127,7 +130,7 @@ proc FormatProcedures {myprocedures} {
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
-    #set myprocedures [ReplaceRepeats $myprocedures]
+    set myprocedures [ReplaceRepeats $myprocedures]
 	return $myprocedures
 }
 
@@ -158,10 +161,12 @@ proc NormalizeHeading {degrees} {
     }
 }
 
+set comment {
 proc repite { cont commands} {
     for {set i 0} {$i<$cont} {incr i} {
 	eval $commands
     }
+}
 }
 
 proc bl {} {
