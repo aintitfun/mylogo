@@ -14,7 +14,6 @@ set WIDTH 800
 set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
-
 set forVariablesSequentia 0
 
 
@@ -64,7 +63,7 @@ proc redraw {} {
 proc FormatRepeats {command} {
     #set command [string map {repite \nav} $command]   
     #set command [regsub -all {repite([0-9]*)} $command {for \{set i 0\}\{\$i<(\1)\}\{incr \$i\}\{"} ]
-    set command [regsub -all {repite ([^\s]+)} $command { for { set i 0 } { $i<\1 } {incr i } } ]
+    set command [regsub -all {repite ([^\s]+)} $command { for { set XXXXX($::forVariablesSequentia) 0 } { $XXXXX($::forVariablesSequentia)<\1 } {incr XXXXX($::forVariablesSequentia) } } ]
 }
 
 proc SetSeparationOnEachCommand {command} {
