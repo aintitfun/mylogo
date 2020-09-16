@@ -14,8 +14,9 @@ set WIDTH 800
 set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
-global variablesArray
-global proceduresArray
+
+set forVariablesSequentia 0
+
 
 #widgets
 wm geometry . "$WIDTH\x$HEIGHT"
@@ -27,19 +28,19 @@ place .window -x 0 -y 0
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 place .proceduresText -x [expr $WIDTH-200] -y 0
 
-
-
-#events
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
 	
-	set mytext [.proceduresText get 1.0 end]
-	if { [string trim $mytext] != "" } {
-	    set tmp2 [FormatProcedures $mytext]
-	    eval $tmp2 
-	    puts $tmp2
+	set proceduresText [.proceduresText get 1.0 end]
+	if { [string trim $proceduresText] != "" } {
+	    set tmp [FormatProcedures $proceduresText]
+        set tmp [FormatRepeats $tmp]
+	    eval $tmp 
+	    puts $tmp
 	}
-	eval  [FormatCommand $commandsVar]
+    set tmp [FormatCommand $commandsVar]
+    set tmp [FormatRepeats $tmp]
+	eval  $tmp
 	set commandsVar "" 
     }
 }
@@ -60,7 +61,7 @@ proc redraw {} {
     set ::position(posy) $::positionNew(posy)
 }
 
-proc ReplaceRepeats {command} {
+proc FormatRepeats {command} {
     #set command [string map {repite \nav} $command]   
     #set command [regsub -all {repite([0-9]*)} $command {for \{set i 0\}\{\$i<(\1)\}\{incr \$i\}\{"} ]
     set command [regsub -all {repite ([^\s]+)} $command { for { set i 0 } { $i<\1 } {incr i } } ]
@@ -96,8 +97,6 @@ proc FormatCommand {command} {
     set command [SetSeparationOnEachCommand $command]
     set command [ChangeBrackets $command]
     set command [FormatVariables $command]
-    #set command [ReplaceRepeats $command]
-    
     return $command
 }
 
@@ -109,7 +108,7 @@ proc FormatProcedures {myprocedures} {
         set variables [ string range $1stline $firstpointspos+1  [ string length $1stline ]  ]
         
         set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"]
-        #previous command removes the first ":" but we need to remove the rest if there are more variables
+        #previous command removes the first ":" replicing it with a bracket, but we need to remove the rest if there are more variables on the 1st line
         set 1stline [string map { ":" ""}  $1stline ]
     
         set 1stline [string map { "\n" "\} \{\n" } $1stline]
@@ -130,7 +129,6 @@ proc FormatProcedures {myprocedures} {
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
-    set myprocedures [ReplaceRepeats $myprocedures]
 	return $myprocedures
 }
 
@@ -161,14 +159,6 @@ proc NormalizeHeading {degrees} {
     }
 }
 
-set comment {
-proc repite { cont commands} {
-    for {set i 0} {$i<$cont} {incr i} {
-	eval $commands
-    }
-}
-}
-
 proc bl {} {
     set ::isPenDown 1
 }
@@ -192,7 +182,7 @@ proc re {dots} {
 
 proc bp {} {
 	set ::positionNew(posx) 0
-	    set ::positionNew(posy) 0
+	    set ::positionNew(posy) 100
 	set ::heading 0
 	.window delete all
 }
