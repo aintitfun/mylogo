@@ -145,7 +145,6 @@ proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
     redraw
-    #puts "$::positionNew(posx) $::positionNew(posy)"
 }
 
 proc gd {degrees} {
@@ -179,7 +178,6 @@ proc sl {} {
 proc haz {variable value} {
     upvar $variable _variable
     set _variable [expr $value]
-    puts "$_variable"
 }
  
 
