@@ -181,7 +181,7 @@ proc haz {variable value} {
     set _variable [expr $value]
     puts "$_variable"
 }
-
+ 
 
 proc re {dots} {
      set ::positionNew(posx) [expr  $::position(posx)-cos([getRadians $::heading]) * $dots ]
