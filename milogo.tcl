@@ -33,6 +33,7 @@ bind .commandsEntry <Key> {
 	if { [string trim $proceduresText] != "" } {
 	    set tmp [FormatProcedures $proceduresText]
         set tmp [FormatRepeats $tmp]
+        set tmp [FormatVariables $tmp]
 	    eval $tmp 
 	    puts $tmp
 	}
@@ -96,7 +97,7 @@ proc ChangeBrackets {command} {
 proc FormatVariables {command} {
     #quitamos las comillas dobles de los haz
     set command [string map {\" \ } $command]
-    set command [regsub -all {:([a-z]*[0-9]*)} $command {$::\1} ]
+    set command [regsub -all {:([a-z]*[0-9]*)} $command {$\1} ]
     return $command
 }
 
@@ -132,7 +133,7 @@ proc FormatProcedures {myprocedures} {
     set rest [string range $myprocedures [string first \n $myprocedures] [string length $myprocedures]]
     set myprocedures "$1stline $rest "
 	set myprocedures [string map {"fin" \} } $myprocedures]
-    set myprocedures [string map { \: \$ } $myprocedures]
+    #set myprocedures [string map { \: \$ } $myprocedures]
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
@@ -176,8 +177,9 @@ proc sl {} {
 
 
 proc haz {variable value} {
-    set command "global $variable;set ::$variable [expr $value]"
-    eval $command
+    upvar $variable _variable
+    set _variable [expr $value]
+    puts "$_variable"
 }
 
 
