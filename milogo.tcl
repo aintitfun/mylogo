@@ -108,47 +108,52 @@ proc FormatCommand {command} {
     return $command
 }
 
-proc FormatProcedureHeader {myprocedures} {
-    set lines [ split $myprocedures \n ]
-    set header [ lindex $lines 0 ]
-    set headerNew ""
+proc FormatProcedureHeader {procLine} {
 
     #quito el corchete de inicio de proc
-    set header [string replace $header [string first "\[" $header] [string first "\[" $header] "."] 
+    set procLine [string replace $procLine [string first "\[" $procLine] [string first "\[" $procLine] "."] 
     #obtengo las distintas partes de la cabecera
-    set words [ split $header "\ "]
-    set pos 0
-    if {[lindex $words 0] != "para"} {
-	#lanzar error: la primera palabra de la cabecera debe ser "para"
-    }
-    
-    #la segunda palabra debe ser el nombre del proc
+    set words [ split $procLine "\ "]
+	
+    #la segunda palabra debe ser el nombre del proc(la primera es el para que ignoramos)
     set procedureName [lindex $words 1]
     
     #el resto han de ser parámetros
     set params [lrange $words 2 end]
 
     #pongo las llaves a los parametros
-    set headerNew "proc $procedureName \{ $params \} \{"  
+    set headerNew "proc $procedureName \{ $params \} \{"
  
-    
-    set ret "$headerNew [join [lrange $lines 1 end] \n]"
-    return $ret
+    return $headerNew
 }
 
 proc FormatProcedures {myprocedures} {
     #head of the procedure formatting
 #    set myprocedures [ regsub {(para )(\w*)( )(:)?(\w*)?( )?(:)?(\w*)?} $myprocedures {\2\{\5\8\}\{} ]
 
-    set myprocedures [FormatProcedureHeader $myprocedures ]
+    
+    #set myprocedures [FormatProcedureHeader $myprocedures ]
     
     set myprocedures [string map {"fin" \} } $myprocedures]
     #set myprocedures [string map { \: \$ } $myprocedures]
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
-    return $myprocedures
+    set lines [split $myprocedures \n]
     
+    #iteramos por las lineas para procesar cada cabecera de cada procedimiento
+    set pos 0
+    foreach line $lines {
+	#si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
+	#y sustituimos la linea
+	if {[string first "para" $line] == 0} {
+	    lappend procLines [FormatProcedureHeader $line]
+	} else {
+	    lappend procLines $line
+	}
+    incr pos
+    }
+    return [join $procLines \n]
 }
 
 #procedimientos movimiento
