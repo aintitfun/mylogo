@@ -32,8 +32,8 @@ bind .commandsEntry <Key> {
 	set proceduresText [.proceduresText get 1.0 end]
 	if { [string trim $proceduresText] != "" } {
 	    set tmp [FormatProcedures $proceduresText]
-        set tmp [FormatRepeats $tmp]
-        set tmp [FormatVariables $tmp]
+	    set tmp [FormatRepeats $tmp]
+	    set tmp [FormatVariables $tmp]
 	    eval $tmp 
 	    puts $tmp
 	}
@@ -108,36 +108,47 @@ proc FormatCommand {command} {
     return $command
 }
 
-proc FormatProcedures {myprocedures} {
-    set 1stline [string range $myprocedures 0 [string first \n $myprocedures] ]
-    set 1stline [string map {para proc} $1stline ]
-    set firstpointspos [string first ":" $1stline]
-    if {$firstpointspos > -1 } {
-        set variables [ string range $1stline $firstpointspos+1  [ string length $1stline ]  ]
-        
-        set 1stline [string replace $1stline $firstpointspos $firstpointspos "\{"]
-        #previous command removes the first ":" replicing it with a bracket, but we need to remove the rest if there are more variables on the 1st line
-        set 1stline [string map { ":" ""}  $1stline ]
-    
-        set 1stline [string map { "\n" "\} \{\n" } $1stline]
-    } else {
-        set 1stline [string map { "\n" " \{\} \{\n" } $1stline]
+proc FormatProcedureHeader {myprocedures} {
+    set lines [ split $myprocedures \n ]
+    set header [ lindex $lines 0 ]
+    set headerNew ""
 
+    #quito el corchete de inicio de proc
+    set header [string replace $header [string first "\[" $header] [string first "\[" $header] "."] 
+    #obtengo las distintas partes de la cabecera
+    set words [ split $header "\ "]
+    set pos 0
+    if {[lindex $words 0] != "para"} {
+	#lanzar error: la primera palabra de la cabecera debe ser "para"
     }
-    set tempa [string first "\{" $1stline ]
-    set tempb [expr {[string first \n $myprocedures]+2}]
-    if { $tempa == $tempb } {
-        set 1stline [ string map { "\} \{\n" " \{\} \{\n" } $1stline ]
-	}
+    
+    #la segunda palabra debe ser el nombre del proc
+    set procedureName [lindex $words 1]
+    
+    #el resto han de ser parámetros
+    set params [lrange $words 2 end]
 
-    set rest [string range $myprocedures [string first \n $myprocedures] [string length $myprocedures]]
-    set myprocedures "$1stline $rest "
-	set myprocedures [string map {"fin" \} } $myprocedures]
+    #pongo las llaves a los parametros
+    set headerNew "proc $procedureName \{ $params \} \{"  
+ 
+    
+    set ret "$headerNew [join [lrange $lines 1 end] \n]"
+    return $ret
+}
+
+proc FormatProcedures {myprocedures} {
+    #head of the procedure formatting
+#    set myprocedures [ regsub {(para )(\w*)( )(:)?(\w*)?( )?(:)?(\w*)?} $myprocedures {\2\{\5\8\}\{} ]
+
+    set myprocedures [FormatProcedureHeader $myprocedures ]
+    
+    set myprocedures [string map {"fin" \} } $myprocedures]
     #set myprocedures [string map { \: \$ } $myprocedures]
     
     set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
-	return $myprocedures
+    return $myprocedures
+    
 }
 
 #procedimientos movimiento
