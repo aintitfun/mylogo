@@ -1,4 +1,4 @@
-#variables 
+#variables tortuga 
 array set position {
     posx 0
     posy 0
@@ -15,6 +15,8 @@ set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 
+#otras variables
+set logoCommands {av gd gi repite haz bp sl bla}
 
 #widgets
 wm geometry . "$WIDTH\x$HEIGHT"
@@ -37,8 +39,8 @@ bind .commandsEntry <Key> {
 	    eval $tmp 
 	    puts $tmp
 	}
-    set tmp [FormatCommand $commandsVar]
-    set tmp [FormatRepeats $tmp]
+	set tmp [FormatCommand $commandsVar]
+	set tmp [FormatRepeats $tmp]
 	eval  $tmp
 	set commandsVar "" 
     }
@@ -74,15 +76,14 @@ proc FormatRepeats {command} {
     set command [regsub {repite ([^\s]+)} $command { for { set XXXXX6 0 } { $XXXXX6<\1 } {incr XXXXX6 } } ]
 
 }
-
+#This is to format correctly the commands and procedures (\n before each command).
+#Also we should apply these to our procedure names as they are new commands,
+#but we should ensure to not apply on procedure header (proc \n name throws error on tcl)
 proc SetSeparationOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
-    set command [string map {av \nav} $command]
-    set command [string map {gd \ngd} $command]
-    set command [string map {gi \ngi} $command]
-    set command [string map {repite \nrepite} $command]
-    set command [string map {haz \nhaz} $command]
-    set command [string map {bp \nbp} $command]
+    foreach word $::logoCommands {
+	set command [string map [list $word \n$word] $command]
+    }
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
     return $command
@@ -117,6 +118,9 @@ proc FormatProcedureHeader {procLine} {
 	
     #la segunda palabra debe ser el nombre del proc(la primera es el para que ignoramos)
     set procedureName [lindex $words 1]
+
+    #add command to the logo command list to take into account for separations
+    lappend ::logoCommands $procedureName
     
     #el resto han de ser parámetros
     set params [lrange $words 2 end]
@@ -137,7 +141,6 @@ proc FormatProcedures {myprocedures} {
     set myprocedures [string map {"fin" \} } $myprocedures]
     #set myprocedures [string map { \: \$ } $myprocedures]
     
-    set myprocedures [SetSeparationOnEachCommand $myprocedures]
     set myprocedures [ChangeBrackets $myprocedures]
     set lines [split $myprocedures \n]
     
@@ -146,13 +149,16 @@ proc FormatProcedures {myprocedures} {
     foreach line $lines {
 	#si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
 	#y sustituimos la linea
+	#en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
+	#deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
 	if {[string first "para" $line] == 0} {
 	    lappend procLines [FormatProcedureHeader $line]
 	} else {
-	    lappend procLines $line
+	    lappend procLines [SetSeparationOnEachCommand $line]
 	}
     incr pos
     }
+
     return [join $procLines \n]
 }
 
