@@ -124,6 +124,7 @@ proc FormatProcedureHeader {procLine} {
     
     #el resto han de ser parámetros
     set params [lrange $words 2 end]
+    set params [string map {":" ""} $params]
 
     #pongo las llaves a los parametros
     set headerNew "proc $procedureName \{ $params \} \{"

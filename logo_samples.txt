@@ -5,9 +5,9 @@ para cua2
 repite 10 [ cua gd 10 ]
 fin
 
-para cua l
+para cua :l
 repite 4 [av :l gd 90]
 fin
-para cua2 c
+para cua2 :c
 repite :c [ cua 30 gd 10 ]
 fin
