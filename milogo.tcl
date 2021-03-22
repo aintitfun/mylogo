@@ -23,7 +23,9 @@ wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
 text .proceduresText -width 40 -height 27
 entry .commandsEntry -textvar commandsVar -width 100
-grid .window .commandsEntry .proceduresText
+canvas .turtle -width 10 -height 10 -bg red
+place .turtle -x 0 -y 0
+grid .window .commandsEntry .proceduresText .turtle
 place .window -x 0 -y 0
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 place .proceduresText -x [expr $WIDTH-200] -y 0
@@ -46,12 +48,14 @@ bind .commandsEntry <Key> {
     }
 }
 
-
-
-
 #procedimientos generales
 proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
+}
+
+proc ShowTurtle {} {
+    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH] -y [expr $::position(posy)+$::HALFWIDTH]
+    .turtle create line 0 0 10 10 
 }
 
 proc redraw {} {
@@ -60,6 +64,8 @@ proc redraw {} {
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
+    
+    ShowTurtle
 }
 
 proc FormatRepeats {command} {
@@ -212,7 +218,7 @@ proc re {dots} {
 
 proc bp {} {
 	set ::positionNew(posx) 0
-	    set ::positionNew(posy) 100
+	set ::positionNew(posy) 100
 	set ::heading 0
 	.window delete all
 }
