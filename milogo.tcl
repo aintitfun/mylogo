@@ -18,18 +18,22 @@ set isPenDown 1
 #otras variables
 set logoCommands {av gd gi repite haz bp sl bla}
 
-#widgets
+#wm & canvas
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
+#controls
 text .proceduresText -width 40 -height 27
 entry .commandsEntry -textvar commandsVar -width 100
-canvas .turtle -width 10 -height 10 -bg red
+#turtle
+canvas .turtle -width 10 -height 10
 place .turtle -x 0 -y 0
-grid .window .commandsEntry .proceduresText .turtle
+.turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
+#places
+grid .window .commandsEntry .proceduresText 
 place .window -x 0 -y 0
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 place .proceduresText -x [expr $WIDTH-200] -y 0
-
+#events
 bind .commandsEntry <Key> {
     if {"%K" in {Enter Return}} {
 	
@@ -53,19 +57,45 @@ proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
 }
 
-proc ShowTurtle {} {
-    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH] -y [expr $::position(posy)+$::HALFWIDTH]
-    .turtle create line 0 0 10 10 
+#https://wiki.tcl-lang.org/page/Canvas+Rotation
+proc RotateItem {w tagOrId Ox Oy angle} {
+   set angle [expr {$angle * atan(1) * 4 / 180.0}] ;# Radians
+   foreach id [$w find withtag $tagOrId] {     ;# Do each component separately
+       set xy {}
+       foreach {x y} [$w coords $id] {
+           # rotates vector (Ox,Oy)->(x,y) by angle clockwise
+
+           set x [expr {$x - $Ox}]             ;# Shift to origin
+           set y [expr {$y - $Oy}]
+
+           set xx [expr {$x * cos($angle) - $y * sin($angle)}] ;# Rotate
+           set yy [expr {$x * sin($angle) + $y * cos($angle)}]
+
+           set xx [expr {$xx + $Ox}]           ;# Shift back
+           set yy [expr {$yy + $Oy}]
+           lappend xy $xx $yy
+       }
+       $w coords $id $xy
+   }
 }
 
-proc redraw {} {
+
+proc ReDrawTurtle {angle} {
+    #.window move turtle [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH]
+    
+    RotateItem .turtle turtle 5 5 $angle
+    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH] -y [expr $::position(posy)+$::HALFWIDTH]
+    #.window coords turtle 100 100 
+}
+
+proc ReDraw {} {
     if { $::isPenDown eq 1} {
 	::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
     
-    ShowTurtle
+    #ShowTurtle
 }
 
 proc FormatRepeats {command} {
@@ -173,17 +203,20 @@ proc FormatProcedures {myprocedures} {
 proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
-    redraw
+    ReDraw
+    ReDrawTurtle 0
 }
 
 proc gd {degrees} {
     set ::heading [expr $::heading+$degrees]
     NormalizeHeading $::heading
+    ReDrawTurtle $degrees
 }
 
 proc gi {degrees} {
     set ::heading [expr $::heading-$degrees]
     NormalizeHeading $::heading
+    ReDrawTurtle [expr - $degrees]
 }
 
 proc NormalizeHeading {degrees} {
@@ -213,7 +246,8 @@ proc haz {variable value} {
 proc re {dots} {
      set ::positionNew(posx) [expr  $::position(posx)-cos([getRadians $::heading]) * $dots ]
      set ::positionNew(posy) [expr  $::position(posy)-sin( [getRadians $::heading] )* $dots ]
-     redraw
+     ReDraw
+     ReDrawTurtle 0
 }
 
 proc bp {} {
