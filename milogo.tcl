@@ -26,7 +26,7 @@ text .proceduresText -width 40 -height 27
 entry .commandsEntry -textvar commandsVar -width 100
 #turtle
 canvas .turtle -width 10 -height 10
-place .turtle -x 0 -y 0
+place .turtle -x 0 -y 100
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 #places
 grid .window .commandsEntry .proceduresText 
@@ -80,10 +80,11 @@ proc RotateItem {w tagOrId Ox Oy angle} {
 }
 
 
-proc ReDrawTurtle {angle} {
+proc ReDrawTurtle {} {
     #.window move turtle [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH]
-    
-    RotateItem .turtle turtle 5 5 $angle
+    .turtle delete -tag turtle
+    .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
+    RotateItem .turtle turtle 5 5 $::heading
     place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH] -y [expr $::position(posy)+$::HALFWIDTH]
     #.window coords turtle 100 100 
 }
@@ -204,19 +205,19 @@ proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
     ReDraw
-    ReDrawTurtle 0
+    ReDrawTurtle 
 }
 
 proc gd {degrees} {
     set ::heading [expr $::heading+$degrees]
     NormalizeHeading $::heading
-    ReDrawTurtle $degrees
+    ReDrawTurtle 
 }
 
 proc gi {degrees} {
     set ::heading [expr $::heading-$degrees]
     NormalizeHeading $::heading
-    ReDrawTurtle [expr - $degrees]
+    ReDrawTurtle 
 }
 
 proc NormalizeHeading {degrees} {
@@ -247,7 +248,7 @@ proc re {dots} {
      set ::positionNew(posx) [expr  $::position(posx)-cos([getRadians $::heading]) * $dots ]
      set ::positionNew(posy) [expr  $::position(posy)-sin( [getRadians $::heading] )* $dots ]
      ReDraw
-     ReDrawTurtle 0
+     ReDrawTurtle 
 }
 
 proc bp {} {
@@ -255,4 +256,5 @@ proc bp {} {
 	set ::positionNew(posy) 100
 	set ::heading 0
 	.window delete all
+    ReDrawTurtle
 }
