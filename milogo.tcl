@@ -26,31 +26,12 @@ text .proceduresText -width 40 -height 27
 entry .commandsEntry -textvar commandsVar -width 100
 #turtle
 canvas .turtle -width 10 -height 10
-place .turtle -x 0 -y 100
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 #places
 grid .window .commandsEntry .proceduresText 
 place .window -x 0 -y 0
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
-place .proceduresText -x [expr $WIDTH-200] -y 0
-#events
-bind .commandsEntry <Key> {
-    if {"%K" in {Enter Return}} {
-	
-	set proceduresText [.proceduresText get 1.0 end]
-	if { [string trim $proceduresText] != "" } {
-	    set tmp [FormatProcedures $proceduresText]
-	    set tmp [FormatRepeats $tmp]
-	    set tmp [FormatVariables $tmp]
-	    eval $tmp 
-	    puts $tmp
-	}
-	set tmp [FormatCommand $commandsVar]
-	set tmp [FormatRepeats $tmp]
-	eval  $tmp
-	set commandsVar "" 
-    }
-}
+place .proceduresText -x [expr $WIDTH-350] -y 0
 
 #procedimientos generales
 proc getRadians { degrees } {
@@ -253,8 +234,30 @@ proc re {dots} {
 
 proc bp {} {
 	set ::positionNew(posx) 0
-	set ::positionNew(posy) 100
+	set ::positionNew(posy) 0
 	set ::heading 0
 	.window delete all
     ReDrawTurtle
+}
+
+#1st of all a clear screen 
+bp
+
+#events
+bind .commandsEntry <Key> {
+    if {"%K" in {Enter Return}} {
+	
+	set proceduresText [.proceduresText get 1.0 end]
+	if { [string trim $proceduresText] != "" } {
+	    set tmp [FormatProcedures $proceduresText]
+	    set tmp [FormatRepeats $tmp]
+	    set tmp [FormatVariables $tmp]
+	    eval $tmp 
+	    puts $tmp
+	}
+	set tmp [FormatCommand $commandsVar]
+	set tmp [FormatRepeats $tmp]
+	eval  $tmp
+	set commandsVar "" 
+    }
 }
