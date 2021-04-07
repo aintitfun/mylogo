@@ -1,7 +1,7 @@
 #variables tortuga 
 array set position {
-    posx 0
-    posy 0
+    posx -200
+    posy -200
 }
 
 array set positionNew {
@@ -233,11 +233,11 @@ proc re {dots} {
 }
 
 proc bp {} {
-	set ::positionNew(posx) 0
-	set ::positionNew(posy) 0
+	set ::position(posx) -200
+	set ::position(posy) -200
 	set ::heading 0
 	.window delete all
-    ReDrawTurtle
+   ReDrawTurtle
 }
 
 #1st of all a clear screen 
