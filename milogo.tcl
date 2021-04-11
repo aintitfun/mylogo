@@ -10,8 +10,8 @@ array set positionNew {
 }
 
 set heading 0
-set WIDTH 800
-set HEIGHT 500
+set WIDTH 1024
+set HEIGHT 768
 set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 
@@ -22,16 +22,28 @@ set logoCommands {av gd gi repite haz bp sl bla}
 wm geometry . "$WIDTH\x$HEIGHT"
 canvas .window -width $WIDTH -height $WIDTH
 #controls
-text .proceduresText -width 40 -height 27
-entry .commandsEntry -textvar commandsVar -width 100
+text .proceduresText -width 41 -height 41
+entry .commandsEntry -textvar commandsVar -width 127
+button .save -width 5 -height 1 -text Save -command {save}
+button .load -width 5 -height 1 -text Load -command {load}
 #turtle
 canvas .turtle -width 10 -height 10
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 #places
-grid .window .commandsEntry .proceduresText 
+#grid .window .commandsEntry .proceduresText 
 place .window -x 0 -y 0
+
+
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
-place .proceduresText -x [expr $WIDTH-350] -y 0
+#pack .proceduresText -side right 
+place .proceduresText -x [expr $WIDTH-335] -y 32
+
+
+#pack .load -side top -padx 200  
+#pack .save -side top 
+#pack .commandsEntry -side bottom
+place .save -x [expr $WIDTH-71] -y 1
+place .load -x [expr $WIDTH-131] -y 1
 
 #procedimientos generales
 proc getRadians { degrees } {
@@ -260,4 +272,16 @@ bind .commandsEntry <Key> {
 	eval  $tmp
 	set commandsVar "" 
     }
+}
+
+proc save {} {
+    set logofile [open [tk_getSaveFile -initialdir . -confirmoverwrite false] w+]
+    puts $logofile [.proceduresText get 1.0 end]
+    close $logofile
+}
+
+proc load {} {
+   set logofile [open [tk_getOpenFile -initialdir .] r]
+   .proceduresText insert 1.0 [read $logofile]
+   close $logofile
 }
