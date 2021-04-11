@@ -48,7 +48,7 @@ place .load -x [expr $WIDTH-131] -y 1
 #procedimientos generales
 proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
-}
+} 
 
 #https://wiki.tcl-lang.org/page/Canvas+Rotation
 proc RotateItem {w tagOrId Ox Oy angle} {
