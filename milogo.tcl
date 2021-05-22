@@ -1,4 +1,10 @@
-#variables tortuga 
+package require Tk 8.6
+lappend auto_path "/home/papa/Descargas/awthemes-10.3.0/"
+package require awdark
+ttk::setTheme awdark
+
+
+#variables tortuga
 array set position {
     posx -200
     posy -200
@@ -20,14 +26,14 @@ set logoCommands {av gd gi repite haz bp sl bla}
 
 #wm & canvas
 wm geometry . "$WIDTH\x$HEIGHT"
-canvas .window -width $WIDTH -height $WIDTH
+canvas .window -width $WIDTH -height $WIDTH -bg black
 #controls
 text .proceduresText -width 41 -height 41
-entry .commandsEntry -textvar commandsVar -width 127
-button .save -width 5 -height 1 -text Save -command {save}
-button .load -width 5 -height 1 -text Load -command {load}
+ttk::entry .commandsEntry -textvar commandsVar -width 127
+ttk::button .save  -text Save -command {save}
+ttk::button .load  -text Load -command {load}
 #turtle
-canvas .turtle -width 10 -height 10
+canvas .turtle -width 10 -height 10 -bg black
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 #places
 #grid .window .commandsEntry .proceduresText 
@@ -78,13 +84,13 @@ proc ReDrawTurtle {} {
     .turtle delete -tag turtle
     .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
     RotateItem .turtle turtle 5 5 $::heading
-    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH] -y [expr $::position(posy)+$::HALFWIDTH]
+    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH-4] -y [expr $::position(posy)+$::HALFWIDTH-4]
     #.window coords turtle 100 100 
 }
 
 proc ReDraw {} {
     if { $::isPenDown eq 1} {
-	::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] 
+        ::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill white
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
@@ -112,7 +118,7 @@ proc FormatRepeats {command} {
 proc SetSeparationOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
     foreach word $::logoCommands {
-	set command [string map [list $word \n$word] $command]
+        set command [string map [list $word \n$word] $command]
     }
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
@@ -145,7 +151,7 @@ proc FormatProcedureHeader {procLine} {
     set procLine [string replace $procLine [string first "\[" $procLine] [string first "\[" $procLine] "."] 
     #obtengo las distintas partes de la cabecera
     set words [ split $procLine "\ "]
-	
+        
     #la segunda palabra debe ser el nombre del proc(la primera es el para que ignoramos)
     set procedureName [lindex $words 1]
 
@@ -178,15 +184,15 @@ proc FormatProcedures {myprocedures} {
     #iteramos por las lineas para procesar cada cabecera de cada procedimiento
     set pos 0
     foreach line $lines {
-	#si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
-	#y sustituimos la linea
-	#en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
-	#deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
-	if {[string first "para" $line] == 0} {
-	    lappend procLines [FormatProcedureHeader $line]
-	} else {
-	    lappend procLines [SetSeparationOnEachCommand $line]
-	}
+        #si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
+        #y sustituimos la linea
+        #en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
+        #deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
+        if {[string first "para" $line] == 0} {
+            lappend procLines [FormatProcedureHeader $line]
+        } else {
+            lappend procLines [SetSeparationOnEachCommand $line]
+        }
     incr pos
     }
 
@@ -215,7 +221,7 @@ proc gi {degrees} {
 
 proc NormalizeHeading {degrees} {
     if { abs($::heading) > 360 } {
-	set ::heading [expr $::heading%360]
+        set ::heading [expr $::heading%360]
     }
     if {$::heading<0} {
       set ::heading [expr $::heading+360]
@@ -245,33 +251,44 @@ proc re {dots} {
 }
 
 proc bp {} {
-	set ::position(posx) -200
-	set ::position(posy) -200
-	set ::heading 0
-	.window delete all
+        set ::position(posx) -200
+        set ::position(posy) -200
+        set ::heading 0
+        .window delete all
    ReDrawTurtle
 }
 
 #1st of all a clear screen 
 bp
 
+global myhistory "start"
+global myhistory_pos 0
+
+
 #events
 bind .commandsEntry <Key> {
-    if {"%K" in {Enter Return}} {
-	
-	set proceduresText [.proceduresText get 1.0 end]
-	if { [string trim $proceduresText] != "" } {
-	    set tmp [FormatProcedures $proceduresText]
-	    set tmp [FormatRepeats $tmp]
-	    set tmp [FormatVariables $tmp]
-	    eval $tmp 
-	    puts $tmp
-	}
-	set tmp [FormatCommand $commandsVar]
-	set tmp [FormatRepeats $tmp]
-	eval  $tmp
-	set commandsVar "" 
-    }
+   if {"%K" in {Enter Return}} {
+      
+      set proceduresText [.proceduresText get 1.0 end]
+      if { [string trim $proceduresText] != "" } {
+          set tmp [FormatProcedures $proceduresText]
+          set tmp [FormatRepeats $tmp]
+          set tmp [FormatVariables $tmp]
+          eval $tmp 
+          puts $tmp
+      }
+      set tmp [FormatCommand $commandsVar]
+      set tmp [FormatRepeats $tmp]
+      eval  $tmp
+      lappend ::myhistory $tmp
+      set commandsVar "" 
+   }
+    
+   if {"%K" in {Up}} {
+      incr ::myhistory_pos
+      set tempos ::$myhistory_pos
+      puts [lindex [ expr ( [ llength ::$myhistory ] - tempos ) ] ::$myhistory] 
+   }
 }
 
 proc save {} {
