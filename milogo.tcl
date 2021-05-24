@@ -1,5 +1,5 @@
 package require Tk 8.6
-lappend auto_path "/home/papa/Descargas/awthemes-10.3.0/"
+lappend auto_path "awthemes-10.3.0/"
 package require awdark
 ttk::setTheme awdark
 
@@ -281,7 +281,8 @@ bind .commandsEntry <Key> {
       set tmp [FormatRepeats $tmp]
       eval  $tmp
       lappend ::myhistory [list $commandsVar]
-      set commandsVar "" 
+      set commandsVar ""
+        set  myhistory_pos 0
    }
     
    if {"%K" in {Up}} {
