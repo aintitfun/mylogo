@@ -261,7 +261,7 @@ proc bp {} {
 #1st of all a clear screen 
 bp
 
-global myhistory "start"
+global myhistory
 global myhistory_pos 0
 
 
@@ -280,14 +280,26 @@ bind .commandsEntry <Key> {
       set tmp [FormatCommand $commandsVar]
       set tmp [FormatRepeats $tmp]
       eval  $tmp
-      lappend ::myhistory $tmp
+      lappend ::myhistory [list $commandsVar]
       set commandsVar "" 
    }
     
    if {"%K" in {Up}} {
-      incr ::myhistory_pos
-      set tempos ::$myhistory_pos
-      puts [lindex [ expr ( [ llength ::$myhistory ] - tempos ) ] ::$myhistory] 
+        incr ::myhistory_pos
+        if {$myhistory_pos > [expr [llength $myhistory]] } {set myhistory_pos [expr [llength $myhistory]]}
+        set tempos [expr [llength $myhistory] - $myhistory_pos ]
+
+        puts [lindex  $myhistory  $tempos]
+        set commandsVar [join [lindex  $myhistory $tempos] " "]
+   }
+    if {"%K" in {Down}} {
+        incr ::myhistory_pos -1
+        if {$myhistory_pos < 0} {set myhistory_pos 0}
+
+        set tempos [expr [llength $myhistory] - $myhistory_pos ]
+
+        puts [lindex  $myhistory  $tempos]
+        set commandsVar [join [lindex  $myhistory $tempos] " "]
    }
 }
 
