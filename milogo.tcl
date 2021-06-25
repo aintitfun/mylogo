@@ -1,7 +1,8 @@
 package require Tk 8.6
-lappend auto_path "awthemes-10.3.0/"
-package require awdark
-ttk::setTheme awdark
+package require Iwidgets
+#lappend auto_path "awthemes-10.3.0/"
+#package require awdark
+#ttk::setTheme awdark
 
 
 #variables tortuga
@@ -26,30 +27,54 @@ set logoCommands {av gd gi repite haz bp sl bla}
 
 #wm & canvas
 wm geometry . "$WIDTH\x$HEIGHT"
-canvas .window -width $WIDTH -height $WIDTH -bg black
 #controls
-text .proceduresText -width 41 -height 41
+iwidgets::panedwindow .pw \
+	-orient vertical \
+	-sashwidth 25  \
+	-sashheight 25  \
+	-showhandle 1
+
+.pw add drawing
+set cs(drawing) [.pw childsite drawing]
+.pw add editor
+set cs(editor) [.pw childsite editor]
+.pw fraction 70 30
+
+canvas $cs(drawing).window -width $WIDTH -height $WIDTH 
+
+
+iwidgets::scrolledtext $cs(editor).proceduresText -width 41 -height 41
 ttk::entry .commandsEntry -textvar commandsVar -width 127
-ttk::button .save  -text Save -command {save}
-ttk::button .load  -text Load -command {load}
+ttk::button $cs(editor).save  -text Save -command {save}
+ttk::button   $cs(editor).load -text Load -command {load}
 #turtle
 canvas .turtle -width 10 -height 10 -bg black
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 #places
 #grid .window .commandsEntry .proceduresText 
-place .window -x 0 -y 0
+#place .window -x 0 -y 0
 
 
 place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 #pack .proceduresText -side right 
-place .proceduresText -x [expr $WIDTH-335] -y 32
+#place $cs(editor).proceduresText -x [expr $WIDTH-335] -y 32
 
+pack $cs(drawing).window \
+	-fill both \
+	-expand 1
 
-#pack .load -side top -padx 200  
-#pack .save -side top 
-#pack .commandsEntry -side bottom
-place .save -x [expr $WIDTH-71] -y 1
-place .load -x [expr $WIDTH-131] -y 1
+pack $cs(editor).load $cs(editor).save
+pack $cs(editor).proceduresText  \
+	-fill both \
+	-expand 1
+
+#place $cs(editor).save -x [expr $WIDTH-71] -y 1
+#place $cs(editor).load -x [expr $WIDTH-131] -y 1
+
+pack .pw \
+	-fill both \
+	-expand 1
+
 
 #procedimientos generales
 proc getRadians { degrees } {
@@ -90,7 +115,8 @@ proc ReDrawTurtle {} {
 
 proc ReDraw {} {
     if { $::isPenDown eq 1} {
-        ::.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill white
+        upvar #0 cs cs
+        $cs(drawing).window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill black
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
@@ -254,7 +280,9 @@ proc bp {} {
         set ::position(posx) -200
         set ::position(posy) -200
         set ::heading 0
-        .window delete all
+        
+        upvar #0 cs cs
+        $cs(drawing).window delete all
    ReDrawTurtle
 }
 
@@ -269,7 +297,7 @@ global myhistory_pos 0
 bind .commandsEntry <Key> {
    if {"%K" in {Enter Return}} {
       
-      set proceduresText [.proceduresText get 1.0 end]
+      set proceduresText [$cs(editor).proceduresText get 1.0 end]
       if { [string trim $proceduresText] != "" } {
           set tmp [FormatProcedures $proceduresText]
           set tmp [FormatRepeats $tmp]
