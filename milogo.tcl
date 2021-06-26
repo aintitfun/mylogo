@@ -24,29 +24,51 @@ set isPenDown 1
 
 #otras variables
 set logoCommands {av gd gi repite haz bp sl bla}
-
-#wm & canvas
+##########################################################################
+#                          wm & #controls
+##########################################################################
 wm geometry . "$WIDTH\x$HEIGHT"
-#controls
+#panedwindow
 iwidgets::panedwindow .pw \
 	-orient vertical \
 	-sashwidth 25  \
 	-sashheight 25  \
 	-showhandle 1
-
 .pw add drawing
 set cs(drawing) [.pw childsite drawing]
 .pw add editor
 set cs(editor) [.pw childsite editor]
 .pw fraction 70 30
-
-canvas $cs(drawing).window -width $WIDTH -height $WIDTH 
-
-
+#controls
+canvas $cs(drawing).window
+#-width $WIDTH -height $WIDTH 
 iwidgets::scrolledtext $cs(editor).proceduresText -width 41 -height 41
-ttk::entry .commandsEntry -textvar commandsVar -width 127
-ttk::button $cs(editor).save  -text Save -command {save}
-ttk::button   $cs(editor).load -text Load -command {load}
+ttk::entry $cs(drawing).commandsEntry -textvar commandsVar
+iwidgets::toolbar $cs(editor).toolBar \
+   -balloonbackground #336699 \
+	-balloonforeground white \
+	-balloondelay1 500 \
+	-balloondelay2 150 \
+	-orient horizontal \
+	-helpvariable helpVar
+$cs(editor).toolBar add button load \
+		-balloonstr "load a script" \
+		-helpstr "this will load a logo script" \
+		-command load \
+		-image [image create photo -file load.png]
+$cs(editor).toolBar add frame spacer \
+	-borderwidth 1 \
+	-width 10 \
+	-height 10
+$cs(editor).toolBar add button save \
+		-balloonstr "save a script" \
+		-helpstr "this will save a logo script" \
+		-command save \
+		-image [image create photo -file save.png]
+
+
+#ttk::button $cs(editor).save  -text Save -command {save}
+#ttk::button   $cs(editor).load -text Load -command {load}
 #turtle
 canvas .turtle -width 10 -height 10 -bg black
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
@@ -55,15 +77,23 @@ canvas .turtle -width 10 -height 10 -bg black
 #place .window -x 0 -y 0
 
 
-place .commandsEntry -x 0 -y [expr $HEIGHT-25]
+#place .commandsEntry -x 0 -y [expr $HEIGHT-25]
 #pack .proceduresText -side right 
 #place $cs(editor).proceduresText -x [expr $WIDTH-335] -y 32
 
-pack $cs(drawing).window \
-	-fill both \
-	-expand 1
+pack $cs(drawing).window  \
+   -fill both \
+   -expand 1 
 
-pack $cs(editor).load $cs(editor).save
+pack $cs(drawing).commandsEntry \
+   -fill x
+
+#pack $cs(drawing).commandsEntry \
+#   -fill x
+#pack $cs(editor).load $cs(editor).save
+pack $cs(editor).toolBar \
+	-fill x \
+	-pady 5
 pack $cs(editor).proceduresText  \
 	-fill both \
 	-expand 1
@@ -294,7 +324,7 @@ global myhistory_pos 0
 
 
 #events
-bind .commandsEntry <Key> {
+bind $cs(drawing).commandsEntry <Key> {
    if {"%K" in {Enter Return}} {
       
       set proceduresText [$cs(editor).proceduresText get 1.0 end]
@@ -339,7 +369,8 @@ proc save {} {
 }
 
 proc load {} {
+   upvar #0 cs cs 
    set logofile [open [tk_getOpenFile -initialdir .] r]
-   .proceduresText insert 1.0 [read $logofile]
+   $cs(editor).proceduresText insert 1.0 [read $logofile]
    close $logofile
 }
