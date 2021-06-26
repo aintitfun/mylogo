@@ -5,7 +5,7 @@ package require Iwidgets
 #ttk::setTheme awdark
 
 
-#variables tortuga
+#turtle variables
 array set position {
     posx -200
     posy -200
@@ -28,22 +28,25 @@ set logoCommands {av gd gi repite haz bp sl bla}
 #                          wm & #controls
 ##########################################################################
 wm geometry . "$WIDTH\x$HEIGHT"
-#panedwindow
-iwidgets::panedwindow .pw \
+
+iwidgets::panedwindow .panedWindow \
 	-orient vertical \
-	-sashwidth 25  \
-	-sashheight 25  \
+	-sashwidth 10  \
+	-sashheight 3000  \
+   -sashindent 0 \
+   -sashcursor sb_h_double_arrow \
 	-showhandle 1
-.pw add drawing
-set cs(drawing) [.pw childsite drawing]
-.pw add editor
-set cs(editor) [.pw childsite editor]
-.pw fraction 70 30
-#controls
+.panedWindow add drawing
+set cs(drawing) [.panedWindow childsite drawing]
+.panedWindow add editor
+set cs(editor) [.panedWindow childsite editor]
+.panedWindow fraction 70 30
 canvas $cs(drawing).window
-#-width $WIDTH -height $WIDTH 
+
 iwidgets::scrolledtext $cs(editor).proceduresText -width 41 -height 41
+
 ttk::entry $cs(drawing).commandsEntry -textvar commandsVar
+
 iwidgets::toolbar $cs(editor).toolBar \
    -balloonbackground #336699 \
 	-balloonforeground white \
@@ -57,7 +60,7 @@ $cs(editor).toolBar add button load \
 		-command load \
 		-image [image create photo -file load.png]
 $cs(editor).toolBar add frame spacer \
-	-borderwidth 1 \
+   -borderwidth 1 \
 	-width 10 \
 	-height 10
 $cs(editor).toolBar add button save \
@@ -66,20 +69,8 @@ $cs(editor).toolBar add button save \
 		-command save \
 		-image [image create photo -file save.png]
 
-
-#ttk::button $cs(editor).save  -text Save -command {save}
-#ttk::button   $cs(editor).load -text Load -command {load}
-#turtle
 canvas .turtle -width 10 -height 10 -bg black
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
-#places
-#grid .window .commandsEntry .proceduresText 
-#place .window -x 0 -y 0
-
-
-#place .commandsEntry -x 0 -y [expr $HEIGHT-25]
-#pack .proceduresText -side right 
-#place $cs(editor).proceduresText -x [expr $WIDTH-335] -y 32
 
 pack $cs(drawing).window  \
    -fill both \
@@ -88,9 +79,6 @@ pack $cs(drawing).window  \
 pack $cs(drawing).commandsEntry \
    -fill x
 
-#pack $cs(drawing).commandsEntry \
-#   -fill x
-#pack $cs(editor).load $cs(editor).save
 pack $cs(editor).toolBar \
 	-fill x \
 	-pady 5
@@ -98,10 +86,7 @@ pack $cs(editor).proceduresText  \
 	-fill both \
 	-expand 1
 
-#place $cs(editor).save -x [expr $WIDTH-71] -y 1
-#place $cs(editor).load -x [expr $WIDTH-131] -y 1
-
-pack .pw \
+pack .panedWindow \
 	-fill both \
 	-expand 1
 
@@ -364,7 +349,7 @@ bind $cs(drawing).commandsEntry <Key> {
 
 proc save {} {
     set logofile [open [tk_getSaveFile -initialdir . -confirmoverwrite false] w+]
-    puts $logofile [.proceduresText get 1.0 end]
+    puts $logofile [c$(editor).proceduresText get 1.0 end]
     close $logofile
 }
 
