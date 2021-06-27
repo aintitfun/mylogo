@@ -1,3 +1,4 @@
+package require Thread
 package require Tk 8.6
 package require Iwidgets
 #lappend auto_path "awthemes-10.3.0/"
@@ -69,7 +70,7 @@ $cs(editor).toolBar add button save \
 		-command save \
 		-image [image create photo -file save.png]
 
-canvas .turtle -width 10 -height 10 -bg black
+canvas .turtle -width 10 -height 10 
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 
 pack $cs(drawing).window  \
@@ -124,8 +125,9 @@ proc ReDrawTurtle {} {
     .turtle delete -tag turtle
     .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
     RotateItem .turtle turtle 5 5 $::heading
-    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH-4] -y [expr $::position(posy)+$::HALFWIDTH-4]
-    #.window coords turtle 100 100 
+    place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH+3] -y [expr $::position(posy)+$::HALFWIDTH+3]
+    #.window coords turtle 100 100
+    update
 }
 
 proc ReDraw {} {
@@ -135,7 +137,7 @@ proc ReDraw {} {
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
-    
+    update
     #ShowTurtle
 }
 
@@ -307,6 +309,12 @@ bp
 global myhistory
 global myhistory_pos 0
 
+proc bgproc {script} {
+    thread::send -async 1 $script _result
+    vwait _result
+    return $::_result
+}
+
 
 #events
 bind $cs(drawing).commandsEntry <Key> {
@@ -317,7 +325,7 @@ bind $cs(drawing).commandsEntry <Key> {
           set tmp [FormatProcedures $proceduresText]
           set tmp [FormatRepeats $tmp]
           set tmp [FormatVariables $tmp]
-          eval $tmp 
+          eval $tmp
           puts $tmp
       }
       set tmp [FormatCommand $commandsVar]
