@@ -1,4 +1,3 @@
-package require Thread
 package require Tk 8.6
 package require Iwidgets
 #lappend auto_path "awthemes-10.3.0/"
@@ -25,6 +24,8 @@ set isPenDown 1
 
 #otras variables
 set logoCommands {av gd gi repite haz bp sl bla}
+set myhistory ""
+
 ##########################################################################
 #                          wm & #controls
 ##########################################################################
