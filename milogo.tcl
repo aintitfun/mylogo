@@ -243,7 +243,18 @@ proc FormatProcedures {myprocedures} {
     return [join $procLines \n]
 }
 
-#procedimientos movimiento
+#procedimientos auxiliares de movimiento
+
+proc NormalizeHeading {degrees} {
+    if { abs($::heading) > 360 } {
+        set ::heading [expr $::heading%360]
+    }
+    if {$::heading<0} {
+      set ::heading [expr $::heading+360]
+    }
+}
+
+#procedimientos logo
 proc av {dots} {
     set ::positionNew(posx) [expr  $::position(posx)+cos([getRadians $::heading]) * $dots ]
     set ::positionNew(posy) [expr  $::position(posy)+sin( [getRadians $::heading] )* $dots ]
@@ -263,16 +274,9 @@ proc gi {degrees} {
     ReDrawTurtle 
 }
 
-proc NormalizeHeading {degrees} {
-    if { abs($::heading) > 360 } {
-        set ::heading [expr $::heading%360]
-    }
-    if {$::heading<0} {
-      set ::heading [expr $::heading+360]
-    }
-}
 
-proc bl {} {
+
+proc bla {} {
     set ::isPenDown 1
 }
 
@@ -304,7 +308,10 @@ proc bp {} {
    ReDrawTurtle
 }
 
+################################### START OF THE PROGRAM ITSELF
 #1st of all a clear screen 
+
+source procedure_alias.tcl
 bp
 
 global myhistory
@@ -315,7 +322,6 @@ proc bgproc {script} {
     vwait _result
     return $::_result
 }
-
 
 #events
 bind $cs(drawing).commandsEntry <Key> {
