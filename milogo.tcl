@@ -1,4 +1,11 @@
-package require Tk 8.6
+lappend auto_path /usr/share/tcltk/iwidgets4.1.0
+lappend auto_path /zvfs/usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0
+#lappend auto_path /home/papa/Documentos/fuentes/mylogo/itk4.1.0
+#lappend auto_path /zvfs/papa/Documentos/fuentes/mylogo/itk4.1.0
+#lappend auto_path /usr/share/tcltk/itk3.4
+#lappend auto_path /usr/lib/tcltk/x86_64-linux-gnu/itk3.4
+
+#package require Tk 8.6
 package require Iwidgets
 #lappend auto_path "awthemes-10.3.0/"
 #package require awdark
