@@ -1,16 +1,18 @@
-lappend auto_path /usr/share/tcltk/iwidgets4.1.0
+lappend auto_path /zvfs/usr/share/tcltk/iwidgets4.1.0/scripts
+lappend auto_path /zvfs/usr/share/tcltk/iwidgets4.1.0
 lappend auto_path /zvfs/usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0
+
 #lappend auto_path /home/papa/Documentos/fuentes/mylogo/itk4.1.0
 #lappend auto_path /zvfs/papa/Documentos/fuentes/mylogo/itk4.1.0
 #lappend auto_path /usr/share/tcltk/itk3.4
 #lappend auto_path /usr/lib/tcltk/x86_64-linux-gnu/itk3.4
 
 #package require Tk 8.6
-#package require Iwidgets
+package require Iwidgets
 #lappend auto_path "awthemes-10.3.0/"
 #package require awdark
 #ttk::setTheme awdark
-package require Ttk
+
 
 #turtle variables
 array set position {
@@ -38,60 +40,69 @@ set myhistory ""
 ##########################################################################
 wm geometry . "$WIDTH\x$HEIGHT"
 
-ttk::panedwindow .panedWindow \
+iwidgets::panedwindow .panedWindow \
+	-orient vertical \
+	-sashwidth 10  \
+	-sashheight 3000  \
+   -sashindent 0 \
+   -sashcursor sb_h_double_arrow \
+	-showhandle 1
+.panedWindow add drawing
+set cs(drawing) [.panedWindow childsite drawing]
+.panedWindow add editor
+set cs(editor) [.panedWindow childsite editor]
+.panedWindow fraction 70 30
+canvas $cs(drawing).window
+
+label $cs(drawing).commandsLabel -text "Direct command window:"
+
+label $cs(editor).proceduresLabel -text "Logo Editor (procedures code):"
+
+iwidgets::scrolledtext $cs(editor).proceduresText -width 41 -height 41
+
+ttk::entry $cs(drawing).commandsEntry -textvar commandsVar
+
+iwidgets::toolbar $cs(editor).toolBar \
+   -balloonbackground #336699 \
+	-balloonforeground white \
+	-balloondelay1 500 \
+	-balloondelay2 150 \
 	-orient horizontal \
-
-ttk::frame .panedWindow.drawing
-ttk::frame .panedWindow.editor
-.panedWindow add .panedWindow.drawing
-.panedWindow add .panedWindow.editor
-
-canvas .panedWindow.drawing.window
-text .panedWindow.editor.proceduresText -width 41 -height 41
-
-ttk::entry .panedWindow.drawing.commandsEntry -textvar commandsVar
-
-#iwidgets::toolbar .panedWindow.editor.toolBar \
-#   -balloonbackground #336699 \
-#	-balloonforeground white \
-#	-balloondelay1 500 \
-#	-balloondelay2 150 \
-#	-orient horizontal \
-#	-helpvariable helpVar
-
-ttk::button .panedWindow.editor.load -image [image create photo -file load.png] -command load
-ttk::button .panedWindow.editor.save -image [image create photo -file save.png] -command save
-#.panedWindow.editor.toolBar add button load \
-#		-balloonstr "load a script" \
-#		-helpstr "this will load a logo script" \
-#		-command load \
-#		-image [image create photo -file load.png]
-#.panedWindow.editor.toolBar add frame spacer \
-#   -borderwidth 1 \
-#	-width 10 \
-#	-height 10
-#.panedWindow.editor.toolBar add button save \
-#		-balloonstr "save a script" \
-#		-helpstr "this will save a logo script" \
-#		-command save \
-#		-image [image create photo -file save.png]
+	-helpvariable helpVar
+$cs(editor).toolBar add button load \
+		-balloonstr "load a script" \
+		-helpstr "this will load a logo script" \
+		-command load \
+		-image [image create photo -file load.png]
+$cs(editor).toolBar add frame spacer \
+   -borderwidth 1 \
+	-width 10 \
+	-height 10
+$cs(editor).toolBar add button save \
+		-balloonstr "save a script" \
+		-helpstr "this will save a logo script" \
+		-command save \
+		-image [image create photo -file save.png]
 
 canvas .turtle -width 10 -height 10 
 .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
 
-pack .panedWindow.drawing.window  \
+pack $cs(drawing).window  \
    -fill both \
    -expand 1 
-pack .panedWindow.editor.load
-pack .panedWindow.editor.save
 
-pack .panedWindow.drawing.commandsEntry \
+pack $cs(drawing).commandsLabel
+
+pack $cs(drawing).commandsEntry \
    -fill x
 
-#pack .panedWindow.editor.toolBar \
-#	-fill x \
-#	-pady 5
-pack .panedWindow.editor.proceduresText  \
+pack $cs(editor).toolBar \
+	-fill x \
+	-pady 5
+
+pack $cs(editor).proceduresLabel
+
+pack $cs(editor).proceduresText  \
 	-fill both \
 	-expand 1
 
@@ -141,7 +152,7 @@ proc ReDrawTurtle {} {
 proc ReDraw {} {
     if { $::isPenDown eq 1} {
         upvar #0 cs cs
-        .panedWindow.drawing.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill black
+        $cs(drawing).window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill black
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
@@ -311,7 +322,7 @@ proc bp {} {
         set ::heading 0
         
         upvar #0 cs cs
-        .panedWindow.drawing.window delete all
+        $cs(drawing).window delete all
    ReDrawTurtle
 }
 
@@ -324,17 +335,17 @@ bp
 global myhistory
 global myhistory_pos 0
 
-#proc bgproc {script} {
-#    thread::send -async 1 $script _result
-#    vwait _result
-#    return $::_result
-#}
+proc bgproc {script} {
+    thread::send -async 1 $script _result
+    vwait _result
+    return $::_result
+}
 
 #events
-bind .panedWindow.drawing.commandsEntry <Key> {
+bind $cs(drawing).commandsEntry <Key> {
    if {"%K" in {Enter Return}} {
       
-      set proceduresText [.panedWindow.editor.proceduresText get 1.0 end]
+      set proceduresText [$cs(editor).proceduresText get 1.0 end]
       if { [string trim $proceduresText] != "" } {
           set tmp [FormatProcedures $proceduresText]
           set tmp [FormatRepeats $tmp]
@@ -378,6 +389,6 @@ proc save {} {
 proc load {} {
    upvar #0 cs cs 
    set logofile [open [tk_getOpenFile -initialdir .] r]
-   .panedWindow.editor.proceduresText insert 1.0 [read $logofile]
+   $cs(editor).proceduresText insert 1.0 [read $logofile]
    close $logofile
 }
