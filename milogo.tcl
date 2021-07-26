@@ -9,13 +9,19 @@ lappend auto_path /zvfs/home/papa/Documentos/fuentes/mylogo
 #package require Iwidgets
 #lappend auto_path "awthemes-10.3.0/"
 #package require awdark
-
-if { [ file exists "/home/papa/Documentos/fuentes/mylogo/load.png" ] == 0 } {
-   set freewrapPath /zvfs/home/papa/Documentos/fuentes/mylogo
+if { [lindex $tcl_platform(os) 0] eq "Linux" } {
+   if { [ file exists "/home/papa/Documentos/fuentes/mylogo/load.png" ] == 0 } {
+      set freewrapPath /zvfs/home/papa/Documentos/fuentes/mylogo
+   } else {
+      set freewrapPath /home/papa/Documentos/fuentes/mylogo
+   }
 } else {
-   set freewrapPath /home/papa/Documentos/fuentes/mylogo
+   if { [ file exists "C:/Users/oscar.polo/Documents/fuentes/mylogo/load.png" ] == 0 } {
+      set freewrapPath /zvfs/Users/oscar.polo/Documents/fuentes/mylogo
+   } else {
+      set freewrapPath "C:/Users/oscar.polo/Documents/fuentes/mylogo"
+   }
 }
-
 ttk::setTheme clam
 package require Ttk
 
