@@ -7,7 +7,7 @@ lappend auto_path /zvfs/home/papa/Documentos/fuentes/mylogo
 
 #package require Tk 8.6
 #package require Iwidgets
-#lappend auto_path "awthemes-10.3.0/"
+lappend auto_path "awthemes-10.3.0/"
 #package require awdark
 if { [lindex $tcl_platform(os) 0] eq "Linux" } {
    if { [ file exists "/home/papa/Documentos/fuentes/mylogo/load.png" ] == 0 } {
@@ -22,7 +22,7 @@ if { [lindex $tcl_platform(os) 0] eq "Linux" } {
       set freewrapPath "C:/Users/oscar.polo/Documents/fuentes/mylogo"
    }
 }
-ttk::setTheme clam
+ttk::setTheme awdark
 package require Ttk
 
 #turtle variables
@@ -60,9 +60,9 @@ ttk::frame .panedWindow.editor.toolBar
 .panedWindow add .panedWindow.drawing 
 .panedWindow add .panedWindow.editor 
 
-canvas .panedWindow.drawing.window -width 700
+canvas .panedWindow.drawing.window -width 700 -bg black -highlightthickness 0 
 text .panedWindow.editor.proceduresText 
-label .panedWindow.drawing.commandsLabel -text "Immediate Commands Window:"
+ttk::label .panedWindow.drawing.commandsLabel -text "Immediate Commands Window:"
 ttk::entry .panedWindow.drawing.commandsEntry -textvar commandsVar
 
 #iwidgets::toolbar .panedWindow.editor.toolBar \
@@ -77,7 +77,7 @@ ttk::entry .panedWindow.drawing.commandsEntry -textvar commandsVar
 
 ttk::button .panedWindow.editor.toolBar.load -image [image create photo -file [file join $freewrapPath load.png]] -command load
 ttk::button .panedWindow.editor.toolBar.save -image [image create photo -file [file join $freewrapPath save.png]] -command save
-label .panedWindow.editor.proceduresLabel -text "Logo Editor(procedure editor):"
+ttk::label .panedWindow.editor.proceduresLabel -text "Logo Editor(procedure editor):"
 #.panedWindow.editor.toolBar add button load \
 #		-balloonstr "load a script" \
 #		-helpstr "this will load a logo script" \
@@ -93,16 +93,16 @@ label .panedWindow.editor.proceduresLabel -text "Logo Editor(procedure editor):"
 #		-command save \
 #		-image [image create photo -file save.png]
 
-canvas .turtle -width 10 -height 10 
-.turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
+canvas .turtle -width 10 -height 10 -bg black -highlightcolor black
+.turtle create poly 1 1 10 5  1 10 -fill white -tag turtle
 
 pack .panedWindow.drawing.window \
    -fill both \
    -expand 1
 
-pack .panedWindow.editor.toolBar -side top
-pack .panedWindow.editor.toolBar.load -side left -anchor n
-pack .panedWindow.editor.toolBar.save -side left -anchor n
+pack .panedWindow.editor.toolBar -side top -pady 5 -fill x 
+pack .panedWindow.editor.toolBar.load  -side left
+pack .panedWindow.editor.toolBar.save -side left
 pack .panedWindow.editor.proceduresLabel -side top -anchor w
 pack .panedWindow.editor.proceduresText -anchor e -side bottom -expand 1 -fill both
 
@@ -153,7 +153,8 @@ proc RotateItem {w tagOrId Ox Oy angle} {
 proc ReDrawTurtle {} {
     #.window move turtle [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH]
     .turtle delete -tag turtle
-    .turtle create poly 1 1 10 5  1 10 -fill yellow -outline green  -tag turtle
+    .turtle configure -bd 0 -highlightcolor black -highlightthickness 0
+    .turtle create poly 1 1 10 5  1 10 -fill white -outline white -tag turtle
     RotateItem .turtle turtle 5 5 $::heading
     place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH-5] -y [expr $::position(posy)+$::HALFWIDTH-5]
     #.window coords turtle 100 100
@@ -163,7 +164,7 @@ proc ReDrawTurtle {} {
 proc ReDraw {} {
     if { $::isPenDown eq 1} {
         upvar #0 cs cs
-        .panedWindow.drawing.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill black
+        .panedWindow.drawing.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill white
     }
     set ::position(posx) $::positionNew(posx)
     set ::position(posy) $::positionNew(posy)
