@@ -1,4 +1,6 @@
 lappend auto_path /zvfs/home/papa/Documentos/fuentes/mylogo
+lappend auto_path /zvfs/awthemes-10.3.0
+
 #lappend auto_path /zvfs/usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0
 #lappend auto_path /home/papa/Documentos/fuentes/mylogo/itk4.1.0
 #lappend auto_path /zvfs/papa/Documentos/fuentes/mylogo/itk4.1.0
@@ -185,6 +187,13 @@ proc FormatRepeats {command} {
     set command [regsub {repite ([^\s]+)} $command { for { set XXXXX5 0 } { $XXXXX5<\1 } {incr XXXXX5 } } ]
     set command [regsub {repite ([^\s]+)} $command { for { set XXXXX6 0 } { $XXXXX6<\1 } {incr XXXXX6 } } ]
 
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX1 0 } { $XXXXX1<\1 } {incr XXXXX1 } } ]
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX2 0 } { $XXXXX2<\1 } {incr XXXXX2 } } ]
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX3 0 } { $XXXXX3<\1 } {incr XXXXX3 } } ]
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX4 0 } { $XXXXX4<\1 } {incr XXXXX4 } } ]
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX5 0 } { $XXXXX5<\1 } {incr XXXXX5 } } ]
+    set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX6 0 } { $XXXXX6<\1 } {incr XXXXX6 } } ]
+
 }
 #This is to format correctly the commands and procedures (\n before each command).
 #Also we should apply these to our procedure names as they are new commands,
@@ -250,6 +259,8 @@ proc FormatProcedures {myprocedures} {
     #set myprocedures [FormatProcedureHeader $myprocedures ]
     
     set myprocedures [string map {"fin" \} } $myprocedures]
+    set myprocedures [string map {"end" \} } $myprocedures]
+
     #set myprocedures [string map { \: \$ } $myprocedures]
     
     set myprocedures [ChangeBrackets $myprocedures]
@@ -262,7 +273,7 @@ proc FormatProcedures {myprocedures} {
         #y sustituimos la linea
         #en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
         #deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
-        if {[string first "para" $line] == 0} {
+        if {[string first "para" $line] == 0 || [string first "to" $line] == 0} {
             lappend procLines [FormatProcedureHeader $line]
         } else {
             lappend procLines [SetSeparationOnEachCommand $line]
