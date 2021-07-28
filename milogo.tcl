@@ -45,7 +45,7 @@ set HALFWIDTH [expr $WIDTH/2]
 set isPenDown 1
 
 #otras variables
-set logoCommands {av gd gi repite haz bp sl bla}
+set logoCommands {av gd gi repite haz bp sl bla fd lt rt cs bk pu pd repeat forward left right clearscreen back penup pendown}
 set myhistory ""
 
 ##########################################################################
