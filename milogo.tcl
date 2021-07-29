@@ -1,5 +1,6 @@
 lappend auto_path /zvfs/home/papa/Documentos/fuentes/mylogo
 lappend auto_path /zvfs/Users/oscar.polo/Documents/fuentes/mylogo/awthemes-10.3.0
+lappend auto_path /zvfs/home/papa/Documentos/fuentes/mylogo/awthemes-10.3.0
 
 #lappend auto_path /zvfs/usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0
 #lappend auto_path /home/papa/Documentos/fuentes/mylogo/itk4.1.0
