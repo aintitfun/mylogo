@@ -1,2 +1,2 @@
 ./freewrap milogo.tcl -o milogo_linux_x64 procedure_alias.tcl load.png save.png
-freewrap milogo.tcl -o milogo_windows_x64 procedure_alias.tcl load.png save.png
+freewrap milogo.tcl -o milogo_windows_x64.exe procedure_alias.tcl load.png save.png -f awlist.txt
