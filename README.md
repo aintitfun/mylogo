@@ -1,8 +1,12 @@
-A simple graphic logo programming interface.
+A simple graphic LOGO programming interface for both Windows & Linx.
 
-At this moment it works only for spanish drawing primitives (such as av, gd, bp ...)
-It supports procedures...
+It has an inmediate entry to enter directly LOGO primitives.
 
-Packaging:
+Also you have a LOGO EDITOR panel to enter LOGO procedures.
 
-./freewrap milogo.tcl -o milogo procedure_alias.tcl /usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0 /usr/lib/tcltk/x86_64-linux-gnu/itk4.1.0/pkgIndex.tcl
+It supports most part of the classic turtle LOGO commands.
+
+You can use the LOGO English and Spanish dialects.
+
+Please! report any issue, hint, anuthing!
+
