@@ -76,14 +76,20 @@ bind .panedWindow.drawing.commandsEntry <Key> {
 }
 
 proc save {} {
-    set logofile [open [tk_getSaveFile -initialdir . -confirmoverwrite false] w+]
-    puts $logofile [c$(editor).proceduresText get 1.0 end]
-    close $logofile
+    set logofile [tk_getSaveFile -initialdir . -confirmoverwrite false]
+    if {$logofile != "" } {
+      set myfile [ open $logofile w+ ]
+      puts $myfile [.panedWindow.editor.proceduresText get 1.0 end]
+      close $myfile
+    }
 }
 
 proc load {} {
    upvar #0 cs cs 
-   set logofile [open [tk_getOpenFile -initialdir .] r]
-   .panedWindow.editor.proceduresText insert 1.0 [read $logofile]
-   close $logofile
+   set logofile [tk_getOpenFile -initialdir .]
+   if {$logofile != ""} {
+      set myfile [open $logofile r]
+      .panedWindow.editor.proceduresText insert 1.0 [read $myfile]
+      close $myfile
+   }
 }
