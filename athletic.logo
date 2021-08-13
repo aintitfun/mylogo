@@ -1,0 +1,16 @@
+para rojo :l :m
+poncl 1
+repite :m [ av :l gd 90 av 1 gi 90 re :l ]
+fin
+
+para blanco :l :m
+poncl 2
+repite :m [ av :l gd 90 av 1 gi 90 re :l ]
+fin
+
+para athletic
+repite 4 [rojo 600 30 blanco 600 30 ]
+rojo 600 30
+fin
+
+

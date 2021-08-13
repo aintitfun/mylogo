@@ -10,7 +10,7 @@ array set positionNew {
 
 set isPenDown 1
 
-set logoCommands {av gd gi repite haz bp sl bla fd lt rt cs bk pu pd repeat forward left right clearscreen back penup pendown}
+set logoCommands {av re gd gi repite haz bp sl bla fd lt rt cs bk pu pd repeat forward left right clearscreen back penup pendown}
 set myhistory ""
 
 set pencilColor 1
