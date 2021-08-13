@@ -4,7 +4,7 @@ package require tooltip
 
 set heading 0
 set WIDTH 1024
-set HEIGHT 768
+set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 
 wm geometry . "$WIDTH\x$HEIGHT"

@@ -13,6 +13,8 @@ set isPenDown 1
 set logoCommands {av gd gi repite haz bp sl bla fd lt rt cs bk pu pd repeat forward left right clearscreen back penup pendown}
 set myhistory ""
 
+set pencilColor 1
+
 proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
 } 
@@ -39,6 +41,26 @@ proc RotateItem {w tagOrId Ox Oy angle} {
    }
 }
 
+proc GetTkColor {logoColor} {
+   switch $logoColor {
+    0 {
+        return black
+    }
+    1 {
+        return red
+    }
+    2 {
+        return white 
+    }
+    default {
+         return white
+    }
+   }
+}
+
+proc poncl {logoColor} {
+    set ::pencilColor $logoColor
+}
 
 proc ReDrawTurtle {} {
    .turtle delete -tag turtle
@@ -53,7 +75,13 @@ proc ReDrawTurtle {} {
 proc ReDraw {} {
    if { $::isPenDown eq 1} {
       upvar #0 cs cs
-      .panedWindow.drawing.window create line [expr $::position(posx)+$::HALFWIDTH] [expr $::position(posy)+$::HALFWIDTH] [expr $::positionNew(posx)+$::HALFWIDTH] [expr $::positionNew(posy)+$::HALFWIDTH] -fill white
+      set tempColor [ GetTkColor $::pencilColor ]  
+      .panedWindow.drawing.window create line \
+         [expr $::position(posx)+$::HALFWIDTH] \
+         [expr $::position(posy)+$::HALFWIDTH] \
+         [expr $::positionNew(posx)+$::HALFWIDTH] \
+         [expr $::positionNew(posy)+$::HALFWIDTH] \
+         -fill $tempColor
    }
    set ::position(posx) $::positionNew(posx)
    set ::position(posy) $::positionNew(posy)
