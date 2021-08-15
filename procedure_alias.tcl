@@ -1,22 +1,29 @@
-#
-proc avanza {dots} { av $dots }
-proc giraderecha {degrees} { gd $degrees }
-proc giraizquierda {degrees} { gi $degrees }
-proc bajalapiz {} { bl }
-proc subelapiz {} { sl }
-proc retrocede {dots} { re $dots }
-proc borrapantalla {} { bp }
-proc fd {dots} { av $dots }
-proc forward {dots} { fd $dots }
-proc rt {degrees} { gd $degrees }
-proc right {degrees} { gd $degrees }
-proc lt {degrees} { gi $degrees }
-proc left {degrees} { gd $degrees }
-proc cs {} { bp }
-proc clearscreen {} { bp }
-proc bk {dots} { re $dots }
-proc back {dots} { re $dots }
-proc pu {} { sl }
-proc penup {} { sl }
-proc pd {} { bla }
-proc pendown {} { bla }
+set LogoPrimitives {
+   {av avanza fd forward}
+   {re retrocede bk back}
+   {gd giraderecha rt right}
+   {gi giraizquierda lt left}
+   {dummy repite dummy repeat}
+   {dummy haz dummy make}
+   {bp borrapantalla cs clearscren}
+   {sl subelapiz pu penup}
+   {bla bajalapiz pd pendown}
+}
+
+proc dummy {} {
+    
+}
+
+foreach {primitive} $::LogoPrimitives {
+    for {set i 1} {$i<[llength $primitive]} {incr i} {
+        set arguments [info args [lindex $primitive 0]]
+        set bodyArguments ""
+        if { $arguments != ""} { set bodyArguments "\$$arguments" }
+        set primitiveToClone [lindex $primitive 0]
+        set alias [lindex $primitive $i]
+        set command "proc $alias \{ $arguments \} \{ $primitiveToClone $bodyArguments \}"
+        eval $command
+    }
+}
+
+

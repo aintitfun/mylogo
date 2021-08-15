@@ -41,20 +41,12 @@ proc RotateItem {w tagOrId Ox Oy angle} {
    }
 }
 
-proc GetTkColor {logoColor} {
+proc GetTkColorFromLogoColor {logoColor} {
    switch $logoColor {
-    0 {
-        return black
-    }
-    1 {
-        return red
-    }
-    2 {
-        return white 
-    }
-    default {
-         return white
-    }
+      0 { return black }
+      1 { return red }
+      2 { return white }
+      default { return white }
    }
 }
 
@@ -75,7 +67,7 @@ proc ReDrawTurtle {} {
 proc ReDraw {} {
    if { $::isPenDown eq 1} {
       upvar #0 cs cs
-      set tempColor [ GetTkColor $::pencilColor ]  
+      set tempColor [ GetTkColorFromLogoColor $::pencilColor ]  
       .panedWindow.drawing.window create line \
          [expr $::position(posx)+$::HALFWIDTH] \
          [expr $::position(posy)+$::HALFWIDTH] \
