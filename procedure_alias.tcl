@@ -8,6 +8,7 @@ set LogoPrimitives {
    {bp borrapantalla cs clearscren}
    {sl subelapiz pu penup}
    {bla bajalapiz pd pendown}
+   {ponpl ponpaleta dummy dummy}
 }
 
 proc dummy {} {

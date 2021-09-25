@@ -15,6 +15,8 @@ set myhistory ""
 
 set pencilColor 1
 
+set palette 0
+
 proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
 } 
@@ -42,17 +44,33 @@ proc RotateItem {w tagOrId Ox Oy angle} {
 }
 
 proc GetTkColorFromLogoColor {logoColor} {
-   switch $logoColor {
-      0 { return black }
-      1 { return red }
-      2 { return white }
-      default { return white }
+   if {$::palette eq 0} {
+      switch $logoColor {
+         0 { return black }
+         1 { return magenta }
+         2 { return cyan }
+         3 { return white }
+      }
+   
+   } else {
+      switch $logoColor {
+         0 { return black }
+         1 { return green }
+         2 { return red }
+         3 { return yellow }
+      }
+
    }
 }
 
 proc poncl {logoColor} {
     set ::pencilColor $logoColor
 }
+
+proc ponpl {logoColor} {
+    set ::palette $logoColor
+}
+
 
 proc ReDrawTurtle {} {
    .turtle delete -tag turtle
