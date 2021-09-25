@@ -17,6 +17,8 @@ set pencilColor 1
 
 set palette 0
 
+
+
 proc getRadians { degrees } {
     return [expr 6.2831853*$degrees/360]
 } 
