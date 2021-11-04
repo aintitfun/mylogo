@@ -18,7 +18,7 @@ if { [lindex $tcl_platform(os) 0] eq "Linux" } {
    }
 }
 
-source [file join $freewrapPath  ui.tcl ] 
+source [file join $freewrapPath  ui.tcl ]
 source [file join $freewrapPath  turtle.tcl ]
 source [file join $freewrapPath  formatting.tcl ]
 source [file join $freewrapPath  procedure_alias.tcl ]
