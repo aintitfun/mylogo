@@ -1,2 +1,2 @@
-./freewrap_linux milogo.tcl -o milogo_linux_x64 procedure_alias.tcl load.png save.png -f awlist.txt
-freewrap milogo.tcl -o milogo_windows_x64.exe procedure_alias.tcl load.png save.png -f awlist.txt
+./freewrap_linux main.tcl -o mylogo_linux_x64 procedure_alias.tcl ui.tcl turtle.tcl formatting.tcl load.png save.png -f awlist.txt
+freewrap main.tcl -o milogo_windows_x64.exe procedure_alias.tcl ui.tcl turtle.tcl formatting.tcl load.png save.png -f awlist.txt
