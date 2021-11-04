@@ -17,8 +17,8 @@ proc FormatRepeats {command} {
     set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX4 0 } { $XXXXX4<\1 } {incr XXXXX4 } } ]
     set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX5 0 } { $XXXXX5<\1 } {incr XXXXX5 } } ]
     set command [regsub {repeat ([^\s]+)} $command { for { set XXXXX6 0 } { $XXXXX6<\1 } {incr XXXXX6 } } ]
-
 }
+
 #This is to format correctly the commands and procedures (\n before each command).
 #Also we should apply these to our procedure names as they are new commands,
 #but we should ensure to not apply on procedure header (proc \n name throws error on tcl)
@@ -109,9 +109,6 @@ proc FormatProcedures {myprocedures} {
 }
 
 #procedimientos auxiliares de movimiento
-
-
-
 proc haz {variable value} {
     upvar $variable _variable
     set _variable [expr $value]
