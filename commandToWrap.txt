@@ -4,3 +4,4 @@ both binaries from linux:
 
 #to compile inside windows: 
 #freewrap main.tcl -o milogo_windows_x64.exe procedure_alias.tcl ui.tcl turtle.tcl formatting.tcl load.png save.png -f awlist.txt
+  
