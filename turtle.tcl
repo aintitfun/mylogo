@@ -10,6 +10,8 @@ array set positionNew {
 
 set isPenDown 1
 
+set isTurtleShown 1
+
 set logoCommands {av re gd gi repite haz bp sl bla fd lt rt cs bk pu pd repeat forward left right clearscreen back penup pendown}
 set myhistory ""
 
@@ -73,15 +75,26 @@ proc ponpl {logoColor} {
     set ::palette $logoColor
 }
 
-
 proc ReDrawTurtle {} {
-   .turtle delete -tag turtle
-   .turtle configure -bd 0 -highlightcolor black -highlightthickness 0
-   .turtle create poly 1 1 10 5  1 10 -fill white -outline white -tag turtle
-   RotateItem .turtle turtle 5 5 $::heading
-   place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH-5] -y [expr $::position(posy)+$::HALFWIDTH-5]
-   #.window coords turtle 100 100
-   update
+   if { $::isTurtleShown eq 1 } {
+      .turtle delete -tag turtle
+      .turtle configure -bd 0 -highlightcolor black -highlightthickness 0
+      .turtle create poly 1 1 10 5  1 10 -fill white -outline white -tag turtle
+      RotateItem .turtle turtle 5 5 $::heading
+      place configure .turtle -x [expr $::position(posx)+$::HALFWIDTH-5] -y [expr $::position(posy)+$::HALFWIDTH-5]
+      #.window coords turtle 100 100
+      update
+   }
+}
+
+proc ot {} {
+    set ::isTurtleShown 0
+    .turtle delete -tag turtle
+}
+
+proc mt {} {
+    set ::isTurtleShown 1
+    ReDrawTurtle
 }
 
 proc ReDraw {} {

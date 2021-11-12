@@ -9,6 +9,8 @@ set LogoPrimitives {
    {sl subelapiz pu penup}
    {bla bajalapiz pd pendown}
    {ponpl ponpaleta dummy dummy}
+   {ot ocultatortuga dummy dummy}
+   {mt muestratortuga dummy dummy}
 }
 
 proc dummy {} {
