@@ -1,4 +1,4 @@
-A simple graphic LOGO programming interface for both Windows & Linx.
+A simple graphic LOGO programming interface for both Windows & Linux.
 
 It has an inmediate entry to enter directly LOGO primitives.
 
