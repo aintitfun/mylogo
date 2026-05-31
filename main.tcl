@@ -23,6 +23,5 @@ source [file join $freewrapPath  turtle.tcl ]
 source [file join $freewrapPath  formatting.tcl ]
 source [file join $freewrapPath  procedure_alias.tcl ]
 
-bp
 
 

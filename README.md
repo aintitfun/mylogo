@@ -8,5 +8,5 @@ It supports most part of the classic turtle LOGO commands.
 
 You can use the LOGO English and Spanish dialects.
 
-Please! report any issue, hint, anuthing!
+Please! report any issue, hint, anything!
 

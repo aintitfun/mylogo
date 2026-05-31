@@ -1,3 +1,6 @@
+set logoCommands {}
+
+
 proc FormatRepeats {command} {
     #set command [string map {repite \nav} $command]   
 
@@ -25,7 +28,7 @@ proc FormatRepeats {command} {
 proc SetSeparationOnEachCommand {command} {
     # para poder soportar más de un comando en linea debemos usar el separador de tcl que es el punto y coma
     foreach word $::logoCommands {
-        set command [string map [list $word \n$word] $command]
+	set command [string map [list $word \n$word] $command]
     }
     # también tenemos que hacer lo mismo para los procedimientos hechos por el usuario
     #...
@@ -58,7 +61,7 @@ proc FormatProcedureHeader {procLine} {
     set procLine [string replace $procLine [string first "\[" $procLine] [string first "\[" $procLine] "."] 
     #obtengo las distintas partes de la cabecera
     set words [ split $procLine "\ "]
-        
+	
     #la segunda palabra debe ser el nombre del proc(la primera es el para que ignoramos)
     set procedureName [lindex $words 1]
 
@@ -93,15 +96,15 @@ proc FormatProcedures {myprocedures} {
     #iteramos por las lineas para procesar cada cabecera de cada procedimiento
     set pos 0
     foreach line $lines {
-        #si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
-        #y sustituimos la linea
-        #en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
-        #deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
-        if {[string first "para" $line] == 0 || [string first "to" $line] == 0} {
-            lappend procLines [FormatProcedureHeader $line]
-        } else {
-            lappend procLines [SetSeparationOnEachCommand $line]
-        }
+	#si la primera palabra es un "para" es que es una cabecera por lo que la procesamos
+	#y sustituimos la linea
+	#en caso contrario añadimos la linea y le aplicamos los separadores (en el header no se
+	#deben aplicar puesto que: "proc \n myproc" da error en tcl por el salto de linea).
+	if {[string first "para" $line] == 0 || [string first "to" $line] == 0} {
+	    lappend procLines [FormatProcedureHeader $line]
+	} else {
+	    lappend procLines [SetSeparationOnEachCommand $line]
+	}
     incr pos
     }
 

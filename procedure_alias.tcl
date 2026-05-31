@@ -18,14 +18,16 @@ proc dummy {} {
 }
 
 foreach {primitive} $::LogoPrimitives {
+    set primitiveToClone [lindex $primitive 0]
+    lappend ::logoCommands $primitiveToClone
     for {set i 1} {$i<[llength $primitive]} {incr i} {
-        set arguments [info args [lindex $primitive 0]]
-        set bodyArguments ""
-        if { $arguments != ""} { set bodyArguments "\$$arguments" }
-        set primitiveToClone [lindex $primitive 0]
-        set alias [lindex $primitive $i]
-        set command "proc $alias \{ $arguments \} \{ $primitiveToClone $bodyArguments \}"
-        eval $command
+	set arguments [info args [lindex $primitive 0]]
+	set bodyArguments ""
+	if { $arguments != ""} { set bodyArguments "\$$arguments" }
+	set alias [lindex $primitive $i]
+	lappend ::logoCommands $alias
+	set command "proc $alias \{ $arguments \} \{ $primitiveToClone $bodyArguments \}"
+	eval $command
     }
 }
 
