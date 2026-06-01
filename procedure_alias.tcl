@@ -9,6 +9,7 @@ set LogoPrimitives {
    {sl subelapiz pu penup}
    {bla bajalapiz pd pendown}
    {ponpl ponpaleta dummy dummy}
+   {poncl poncolorlapiz dummy dummy}
    {ot ocultatortuga dummy dummy}
    {mt muestratortuga dummy dummy}
 }

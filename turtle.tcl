@@ -31,37 +31,37 @@ proc RotateItem {w tagOrId Ox Oy angle} {
    foreach id [$w find withtag $tagOrId] {     ;# Do each component separately
       set xy {}
       foreach {x y} [$w coords $id] {
-          # rotates vector (Ox,Oy)->(x,y) by angle clockwise
+	  # rotates vector (Ox,Oy)->(x,y) by angle clockwise
 
-         set x [expr {$x - $Ox}]             ;# Shift to origin
-         set y [expr {$y - $Oy}]
+	 set x [expr {$x - $Ox}]             ;# Shift to origin
+	 set y [expr {$y - $Oy}]
 
-         set xx [expr {$x * cos($angle) - $y * sin($angle)}] ;# Rotate
-         set yy [expr {$x * sin($angle) + $y * cos($angle)}]
+	 set xx [expr {$x * cos($angle) - $y * sin($angle)}] ;# Rotate
+	 set yy [expr {$x * sin($angle) + $y * cos($angle)}]
 
-         set xx [expr {$xx + $Ox}]           ;# Shift back
-         set yy [expr {$yy + $Oy}]
-         lappend xy $xx $yy
+	 set xx [expr {$xx + $Ox}]           ;# Shift back
+	 set yy [expr {$yy + $Oy}]
+	 lappend xy $xx $yy
       }
       $w coords $id $xy
    }
 }
 
 proc GetTkColorFromLogoColor {logoColor} {
-   if {$::palette eq 0} {
+   if {$::palette eq 1} {
       switch $logoColor {
-         0 { return black }
-         1 { return magenta }
-         2 { return cyan }
-         3 { return white }
+	 0 { return black }
+	 1 { return cyan }
+	 2 { return magenta }
+	 3 { return white }
       }
-   
-   } else {
+   } 
+    if {$::palette eq 0} {
       switch $logoColor {
-         0 { return black }
-         1 { return green }
-         2 { return red }
-         3 { return yellow }
+	 0 { return black }
+	 1 { return green }
+	 2 { return red }
+	 3 { return yellow }
       }
 
    }
@@ -102,11 +102,11 @@ proc ReDraw {} {
       upvar #0 cs cs
       set tempColor [ GetTkColorFromLogoColor $::pencilColor ]  
       .panedWindow.drawing.window create line \
-         [expr $::position(posx)+$::HALFWIDTH] \
-         [expr $::position(posy)+$::HALFWIDTH] \
-         [expr $::positionNew(posx)+$::HALFWIDTH] \
-         [expr $::positionNew(posy)+$::HALFWIDTH] \
-         -fill $tempColor
+	 [expr $::position(posx)+$::HALFWIDTH] \
+	 [expr $::position(posy)+$::HALFWIDTH] \
+	 [expr $::positionNew(posx)+$::HALFWIDTH] \
+	 [expr $::positionNew(posy)+$::HALFWIDTH] \
+	 -fill $tempColor
    }
    set ::position(posx) $::positionNew(posx)
    set ::position(posy) $::positionNew(posy)
