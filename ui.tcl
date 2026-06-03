@@ -8,7 +8,7 @@ set HEIGHT 500
 set HALFWIDTH [expr $WIDTH/2]
 
 wm geometry . "$WIDTH\x$HEIGHT"
-ttk::panedwindow .panedWindow	-orient horizontal 
+ttk::panedwindow .panedWindow        -orient horizontal 
 ttk::frame .panedWindow.drawing 
 ttk::frame .panedWindow.editor
 ttk::frame .panedWindow.editor.toolBar
@@ -18,8 +18,8 @@ canvas .panedWindow.drawing.window -width 700 -bg black -highlightthickness 0
 text .panedWindow.editor.proceduresText 
 ttk::label .panedWindow.drawing.commandsLabel -text "Immediate Commands Window:"
 ttk::entry .panedWindow.drawing.commandsEntry -textvar commandsVar
-ttk::button .panedWindow.editor.toolBar.load -image [image create photo -file [file join $freewrapPath load.png]] -command load
-ttk::button .panedWindow.editor.toolBar.save -image [image create photo -file [file join $freewrapPath save.png]] -command save
+ttk::button .panedWindow.editor.toolBar.load -image [loadIcon [file join $freewrapPath load.png] 3] -command load
+ttk::button .panedWindow.editor.toolBar.save -image [loadIcon [file join $freewrapPath save.png] 3] -command save
 ttk::label .panedWindow.editor.proceduresLabel -text "Logo Editor(procedure editor):"
 canvas .turtle -width 10 -height 10 -bg black -highlightcolor black
 .turtle create poly 1 1 10 5  1 10 -fill white -tag turtle
@@ -42,37 +42,45 @@ bind .panedWindow.drawing.commandsEntry <Key> {
       
       set proceduresText [.panedWindow.editor.proceduresText get 1.0 end]
       if { [string trim $proceduresText] != "" } {
-          set tmp [FormatProcedures $proceduresText]
-          set tmp [FormatRepeats $tmp]
-          set tmp [FormatVariables $tmp]
-          eval $tmp
-          puts $tmp
+	  set tmp [FormatProcedures $proceduresText]
+	  set tmp [FormatRepeats $tmp]
+	  set tmp [FormatVariables $tmp]
+	  eval $tmp
+	  puts $tmp
       }
       set tmp [FormatCommand $commandsVar]
       set tmp [FormatRepeats $tmp]
       eval  $tmp
       lappend ::myhistory [list $commandsVar]
       set commandsVar ""
-        set  myhistory_pos 0
+	set  myhistory_pos 0
    }
     
    if {"%K" in {Up}} {
-        incr ::myhistory_pos
-        if {$myhistory_pos > [expr [llength $myhistory]] } {set myhistory_pos [expr [llength $myhistory]]}
-        set tempos [expr [llength $myhistory] - $myhistory_pos ]
+	incr ::myhistory_pos
+	if {$myhistory_pos > [expr [llength $myhistory]] } {set myhistory_pos [expr [llength $myhistory]]}
+	set tempos [expr [llength $myhistory] - $myhistory_pos ]
 
-        puts [lindex  $myhistory  $tempos]
-        set commandsVar [join [lindex  $myhistory $tempos] " "]
+	puts [lindex  $myhistory  $tempos]
+	set commandsVar [join [lindex  $myhistory $tempos] " "]
    }
     if {"%K" in {Down}} {
-        incr ::myhistory_pos -1
-        if {$myhistory_pos < 0} {set myhistory_pos 0}
+	incr ::myhistory_pos -1
+	if {$myhistory_pos < 0} {set myhistory_pos 0}
 
-        set tempos [expr [llength $myhistory] - $myhistory_pos ]
+	set tempos [expr [llength $myhistory] - $myhistory_pos ]
 
-        puts [lindex  $myhistory  $tempos]
-        set commandsVar [join [lindex  $myhistory $tempos] " "]
+	puts [lindex  $myhistory  $tempos]
+	set commandsVar [join [lindex  $myhistory $tempos] " "]
    }
+}
+
+proc loadIcon {path {factor 2}} {
+    set img [image create photo -file $path]
+    set out [image create photo]
+    $out copy $img -subsample $factor $factor
+    image delete $img
+    return $out
 }
 
 proc save {} {
